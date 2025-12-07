@@ -1,41 +1,132 @@
-<script setup>
-const testimonials = [
-  {
-    id: 1,
-    name: 'María González',
-    role: 'Directora Creativa',
-    message: 'Casa Moderna supo interpretar nuestro ADN de marca y llevarlo al espacio físico con un resultado impecable.',
-    avatar: 'https://i.pravatar.cc/150?img=47'
-  },
-  {
-    id: 2,
-    name: 'Luis Fernández',
-    role: 'Propietario residencial',
-    message: 'Profesionales dedicados que cuidan cada detalle. El proceso fue transparente y el resultado superó las expectativas.',
-    avatar: 'https://i.pravatar.cc/150?img=12'
-  }
-]
-</script>
-
 <template>
-  <section id="testimonials" class="bg-gray-50 py-24">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16">
-        <p class="uppercase text-xs tracking-[0.4em] text-gray-500 mb-4">Lo que dicen nuestros clientes</p>
-        <h2 class="text-3xl md:text-4xl font-semibold text-gray-900">La mejor garantía de nuestro trabajo</h2>
+  <section id="testimonials" class="w-full bg-gray-100 py-18">
+    <div class="max-w-6xl mx-auto px-6">
+      <!-- Header -->
+      <div class="text-center mb-12 px-4 sm:px-0">
+        <p class="text-gray-500 text-sm tracking-widest mb-4">LO QUE DICEN NUESTROS CLIENTES</p>
+        <h2 class="text-2xl md:text-5xl font-bold text-black">La mejor garantía de nuestro trabajo</h2>
       </div>
-      <div class="grid gap-8 md:grid-cols-2">
-        <article v-for="testimonial in testimonials" :key="testimonial.id" class="bg-white p-8 rounded-3xl shadow">
-          <div class="flex items-center gap-4 mb-6">
-            <img :src="testimonial.avatar" :alt="testimonial.name" class="w-14 h-14 rounded-full object-cover" />
-            <div>
-              <p class="font-semibold text-gray-900">{{ testimonial.name }}</p>
-              <p class="text-sm text-gray-500">{{ testimonial.role }}</p>
+
+      <!-- Testimonials Carousel -->
+      <div class="relative">
+        <div class="overflow-hidden">
+          <transition-group
+            name="fade"
+            tag="div"
+            class="w-full"
+          >
+            <div
+              v-for="(testimonial, index) in testimonials"
+              v-show="index === currentTestimonial"
+              :key="`testimonial-${index}`"
+              class="w-full flex-shrink-0"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-lg">
+                  <div class="flex items-center mb-6">
+                    <img
+                      :src="testimonial.avatar"
+                      :alt="testimonial.name"
+                      class="w-16 h-16 rounded-full object-cover mr-4"
+                    />
+                    <div>
+                      <h4 class="font-bold text-black">{{ testimonial.name }}</h4>
+                      <p class="text-orange-500 text-sm font-semibold">{{ testimonial.project }}</p>
+                    </div>
+                  </div>
+                  <p class="text-gray-600 text-sm leading-relaxed">{{ testimonial.text }}</p>
+                </div>
+
+                <!-- Testimonial 2 (if exists) -->
+                <div
+                  v-if="index + 1 < testimonials.length"
+                  class="bg-white p-8 rounded-lg"
+                >
+                  <div class="flex items-center mb-6">
+                    <img
+                      :src="testimonials[index + 1].avatar"
+                      :alt="testimonials[index + 1].name"
+                      class="w-16 h-16 rounded-full object-cover mr-4"
+                    />
+                    <div>
+                      <h4 class="font-bold text-black">{{ testimonials[index + 1].name }}</h4>
+                      <p class="text-orange-500 text-sm font-semibold">{{ testimonials[index + 1].project }}</p>
+                    </div>
+                  </div>
+                  <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[index + 1].text }}</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <p class="text-gray-600 leading-relaxed">“{{ testimonial.message }}”</p>
-        </article>
+          </transition-group>
+        </div>
+
+        <!-- Dots Navigation -->
+        <div class="flex justify-center gap-3 mt-12">
+          <button
+            v-for="(_, index) in Math.ceil(testimonials.length / 2)"
+            :key="`dot-${index}`"
+            @click="currentTestimonial = index * 2"
+            class="transition-all duration-300"
+            :class="
+              index * 2 === currentTestimonial
+                ? 'w-8 h-3 bg-orange-500 rounded-full'
+                : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'
+            "
+            :aria-label="`Go to testimonial ${index + 1}`"
+          />
+        </div>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+
+const currentTestimonial = ref(0)
+
+const testimonials = [
+  {
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop',
+    name: 'Nombre del cliente',
+    project: 'NOMBRE DEL PROYECTO',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
+  },
+  {
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop',
+    name: 'Nombre del cliente',
+    project: 'NOMBRE DEL PROYECTO',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
+  },
+  {
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop',
+    name: 'Nombre del cliente',
+    project: 'NOMBRE DEL PROYECTO',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
+  },
+  {
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop',
+    name: 'Nombre del cliente',
+    project: 'NOMBRE DEL PROYECTO',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
+  }
+]
+</script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.7s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>

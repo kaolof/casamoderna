@@ -16,7 +16,7 @@
           <img
             :src="slide.image"
             :alt="slide.title"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover object-center min-h-full"
           />
           <!-- Overlay oscuro para mejor legibilidad del texto -->
           <div class="absolute inset-0 bg-black/30"></div>
@@ -24,16 +24,16 @@
       </transition-group>
 
       <!-- Contenido de texto centrado -->
-      <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 sm:px-6">
         <transition
           name="slide-up"
           mode="out-in"
         >
-          <div :key="currentSlide" class="px-4">
-            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-balance">
+          <div :key="currentSlide" class="px-4 max-w-3xl">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight drop-shadow-md">
               {{ slides[currentSlide].title }}
             </h1>
-            <p class="text-xl md:text-2xl font-light text-balance">
+            <p class="text-lg sm:text-xl md:text-2xl font-light leading-relaxed">
               {{ slides[currentSlide].subtitle }}
             </p>
           </div>

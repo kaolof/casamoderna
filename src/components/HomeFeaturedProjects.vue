@@ -1,36 +1,68 @@
-<script setup>
-const featured = [
-  { id: 1, name: 'Casa Minimalista', location: 'Madrid, España', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=600&fit=crop' },
-  { id: 2, name: 'Oficina Ejecutiva', location: 'Barcelona, España', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=600&fit=crop' },
-  { id: 3, name: 'Loft Urbano', location: 'Valencia, España', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=600&fit=crop' }
-]
-</script>
-
 <template>
-  <section id="projects" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-    <div class="text-center mb-16">
-      <p class="uppercase text-xs tracking-[0.4em] text-gray-500 mb-4">De planos a realidades</p>
-      <h2 class="text-3xl md:text-4xl font-semibold text-gray-900">Descubre nuestros proyectos</h2>
-    </div>
-    <div class="grid gap-6 md:grid-cols-3">
-      <article
-        v-for="project in featured"
-        :key="project.id"
-        class="group relative rounded-3xl overflow-hidden"
-      >
-        <img :src="project.image" :alt="project.name" class="h-80 w-full object-cover group-hover:scale-105 transition duration-300" />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-        <div class="absolute bottom-0 p-6 text-white">
-          <p class="text-xs uppercase tracking-[0.4em] text-gray-200">Proyecto destacado</p>
-          <h3 class="text-2xl font-semibold">{{ project.name }}</h3>
-          <p class="text-sm text-gray-200">{{ project.location }}</p>
+  <section class="py-20 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-16">
+        <p class="text-sm font-semibold tracking-widest text-gray-600 mb-4">DE PLANOS A REALIDADES</p>
+        <h2 class="text-5xl md:text-6xl font-bold text-black">Descubre nuestros proyectos</h2>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div
+          v-for="(project, index) in projects"
+          :key="index"
+          class="relative h-80 overflow-hidden group cursor-pointer"
+        >
+          <!-- Background Image -->
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+            :style="{ backgroundImage: `url(${project.image})` }"
+          ></div>
+
+          <!-- Overlay -->
+          <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-all duration-300"></div>
+
+          <!-- Content -->
+          <div class="absolute inset-0 flex flex-col justify-end p-8">
+            <p class="text-white text-sm font-semibold tracking-widest mb-2">{{ project.category }}</p>
+            <h3 class="text-white text-2xl font-bold">{{ project.title }}</h3>
+          </div>
         </div>
-      </article>
-    </div>
-    <div class="text-center mt-12">
-      <button class="border border-gray-900 px-10 py-3 rounded-full uppercase tracking-wide hover:bg-gray-900 hover:text-white transition">
-        Ver todos los proyectos
-      </button>
+      </div>
+
+      <!-- Button -->
+      <div class="flex justify-center">
+        <button class="px-12 py-4 border-2 border-black text-black font-bold tracking-widest hover:bg-black hover:text-white transition-all duration-300">
+          VER TODOS LOS PROYECTOS
+        </button>
+      </div>
     </div>
   </section>
 </template>
+
+<script setup>
+const projects = [
+  {
+    category: 'CATEGORÍA',
+    title: 'Nombre del proyecto arquitectónico',
+    image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=400&fit=crop'
+  },
+  {
+    category: 'CATEGORÍA',
+    title: 'Nombre del proyecto arquitectónico',
+    image: 'https://images.unsplash.com/photo-1565621981027-f127ff144326?w=600&h=400&fit=crop'
+  },
+  {
+    category: 'CATEGORÍA',
+    title: 'Nombre del proyecto arquitectónico',
+    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop'
+  }
+]
+</script>
+
+<style scoped>
+section {
+  background-color: #f9f9f9;
+}
+</style>
