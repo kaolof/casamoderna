@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <!-- Imagen inferior izquierda -->
+        <!-- Imagen inferior izquierda. -->
         <div class="col-span-1 row-span-1 overflow-hidden shadow-lg">
           <img
             src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=600&fit=crop"
