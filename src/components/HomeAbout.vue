@@ -48,15 +48,15 @@
         </p>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-4">
           <div>
-            <p class="text-3xl font-semibold text-gray-900">150+</p>
+            <p class="text-3xl font-semibold text-orange-500">150+</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Proyectos</p>
           </div>
           <div>
-            <p class="text-3xl font-semibold text-gray-900">25</p>
+            <p class="text-3xl font-semibold text-orange-500">25</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Especialistas</p>
           </div>
           <div>
-            <p class="text-3xl font-semibold text-gray-900">12</p>
+            <p class="text-3xl font-semibold text-orange-500">12</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Ciudades</p>
           </div>
         </div>

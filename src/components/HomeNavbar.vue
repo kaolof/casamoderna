@@ -24,14 +24,23 @@
 
         <!-- Desktop Navigation Links -->
         <div class="hidden md:flex items-center gap-8">
-          <a
-            v-for="link in navLinks"
-            :key="link.name"
-            :href="link.href"
-            class="text-sm font-medium transition-all cursor-pointer pb-1 text-gray-800 hover:text-orange-500 border-b-2 border-transparent hover:border-orange-500"
-          >
-            {{ link.name }}
-          </a>
+          <template v-for="link in navLinks" :key="link.name">
+            <router-link
+              v-if="!link.href.startsWith('#')"
+              :to="link.href"
+              class="text-sm font-medium transition-all cursor-pointer pb-1 text-gray-800 hover:text-orange-500 border-b-2 border-transparent hover:border-orange-500"
+            >
+              {{ link.name }}
+            </router-link>
+
+            <a
+              v-else
+              :href="link.href"
+              class="text-sm font-medium transition-all cursor-pointer pb-1 text-gray-800 hover:text-orange-500 border-b-2 border-transparent hover:border-orange-500"
+            >
+              {{ link.name }}
+            </a>
+          </template>
         </div>
       </div>
 
@@ -41,15 +50,25 @@
           v-if="isMenuOpen"
           class="md:hidden mt-4 border-t border-gray-200 pt-4 flex flex-col gap-3 text-sm"
         >
-          <a
-            v-for="link in navLinks"
-            :key="`mobile-${link.name}`"
-            :href="link.href"
-            class="py-2 text-gray-800 font-medium border-b border-gray-100 last:border-b-0 hover:text-orange-500"
-            @click="closeMenu"
-          >
-            {{ link.name }}
-          </a>
+          <template v-for="link in navLinks" :key="`mobile-${link.name}`">
+            <router-link
+              v-if="!link.href.startsWith('#')"
+              :to="link.href"
+              class="py-2 text-gray-800 font-medium border-b border-gray-100 last:border-b-0 hover:text-orange-500"
+              @click="closeMenu"
+            >
+              {{ link.name }}
+            </router-link>
+
+            <a
+              v-else
+              :href="link.href"
+              class="py-2 text-gray-800 font-medium border-b border-gray-100 last:border-b-0 hover:text-orange-500"
+              @click="closeMenu"
+            >
+              {{ link.name }}
+            </a>
+          </template>
         </div>
       </transition>
     </div>
@@ -62,9 +81,9 @@ import { ref } from 'vue'
 const isMenuOpen = ref(false)
 
 const navLinks = [
-  { name: 'Home', href: '#' },
+  { name: 'Home', href: '/' },
   { name: 'Nosotros', href: '#about' },
-  { name: 'Proyectos', href: '#projects' },
+  { name: 'Proyectos', href: '/proyectos' },
   { name: 'Servicios', href: '#services' },
   { name: 'Testimonios', href: '#testimonials' },
   { name: 'Contacto', href: '#contact' }
