@@ -8,58 +8,53 @@
       </div>
 
       <!-- Testimonials Carousel -->
-      <div class="relative">
-        <div class="overflow-hidden">
-          <transition-group
-            name="fade"
-            tag="div"
+      <div class="relative min-h-[400px]">
+        <transition
+          name="fade"
+          mode="out-in"
+        >
+          <div
+            :key="`testimonial-${currentTestimonial}`"
             class="w-full"
           >
-            <div
-              v-for="(testimonial, index) in testimonials"
-              v-show="index === currentTestimonial"
-              :key="`testimonial-${index}`"
-              class="w-full flex-shrink-0"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-white p-8 rounded-lg">
-                  <div class="flex items-center mb-6">
-                    <img
-                      :src="testimonial.avatar"
-                      :alt="testimonial.name"
-                      class="w-16 h-16 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <h4 class="font-bold text-black">{{ testimonial.name }}</h4>
-                      <p class="text-orange-500 text-sm font-semibold">{{ testimonial.project }}</p>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Testimonial 1 -->
+              <div class="bg-white p-8 rounded-lg">
+                <div class="flex items-center mb-6">
+                  <img
+                    :src="testimonials[currentTestimonial].avatar"
+                    :alt="testimonials[currentTestimonial].name"
+                    class="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <h4 class="font-bold text-black">{{ testimonials[currentTestimonial].name }}</h4>
+                    <p class="text-orange-500 text-sm font-semibold">{{ testimonials[currentTestimonial].project }}</p>
                   </div>
-                  <p class="text-gray-600 text-sm leading-relaxed">{{ testimonial.text }}</p>
                 </div>
+                <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[currentTestimonial].text }}</p>
+              </div>
 
-                <!-- Testimonial 2 (if exists) -->
-                <div
-                  v-if="index + 1 < testimonials.length"
-                  class="bg-white p-8 rounded-lg"
-                >
-                  <div class="flex items-center mb-6">
-                    <img
-                      :src="testimonials[index + 1].avatar"
-                      :alt="testimonials[index + 1].name"
-                      class="w-16 h-16 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <h4 class="font-bold text-black">{{ testimonials[index + 1].name }}</h4>
-                      <p class="text-orange-500 text-sm font-semibold">{{ testimonials[index + 1].project }}</p>
-                    </div>
+              <!-- Testimonial 2 (if exists) -->
+              <div
+                v-if="currentTestimonial + 1 < testimonials.length"
+                class="bg-white p-8 rounded-lg"
+              >
+                <div class="flex items-center mb-6">
+                  <img
+                    :src="testimonials[currentTestimonial + 1].avatar"
+                    :alt="testimonials[currentTestimonial + 1].name"
+                    class="w-16 h-16 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <h4 class="font-bold text-black">{{ testimonials[currentTestimonial + 1].name }}</h4>
+                    <p class="text-orange-500 text-sm font-semibold">{{ testimonials[currentTestimonial + 1].project }}</p>
                   </div>
-                  <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[index + 1].text }}</p>
                 </div>
+                <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[currentTestimonial + 1].text }}</p>
               </div>
             </div>
-          </transition-group>
-        </div>
+          </div>
+        </transition>
 
         <!-- Dots Navigation -->
         <div class="flex justify-center gap-3 mt-12">

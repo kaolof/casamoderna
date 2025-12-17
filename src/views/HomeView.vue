@@ -15,7 +15,9 @@ import HomeContactFooter from '../components/HomeContactFooter.vue'
     <main>
       <HomeHero />
       <HomeAbout />
-      <HomeProjects />
+      <HomeProjects 
+        :image-src="'/images/home/cta1.jpg'"
+      />
       <HomeServices />
       <!-- Reutilización del componente HomeProjects con contenido distinto -->
       <HomeProjects
@@ -23,7 +25,7 @@ import HomeContactFooter from '../components/HomeContactFooter.vue'
         description="Agenda una llamada o reunión con nuestros arquitectos para conocer de cerca tu 
                     idea y orientarte en los primeros pasos."
         button-text="AGENDAR REUNIÓN"
-        :image-src="'/images/image2.svg'"
+        :image-src="'/images/home/cta2.jpg'"
         image-alt="Proyecto residencial"
         button-href="#projects"
       />

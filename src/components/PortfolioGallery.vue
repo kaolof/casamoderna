@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+const API_BASE_URL = `https://${import.meta.env.VITE_WP_DOMAIN}/wp-json/wp/v2`
+
 const categories = ['CATEGORÍA 1','CATEGORÍA 2','CATEGORÍA 3','CATEGORÍA 4','CATEGORÍA 5']
 
 // Proyectos desde la API
@@ -10,35 +12,53 @@ const isLoading = ref(true)
 // Consumir API de WordPress
 onMounted(async () => {
   try {
-    const response = await fetch('https://cms.construcasamoderna.com/wp-json/wp/v2/proyecto')
+    const response = await fetch(`${API_BASE_URL}/proyecto`)
     const data = await response.json()
     console.log('Cantidad de proyectos en la API:', data.length)
     
-    // Mapear los datos de la API al formato del componente
-    projects.value = await Promise.all(data.map(async (project) => {
-      let imageUrl = '/images/portfolioHero.png' // Imagen por defecto
-      
-      // Si tiene imagen principal, obtenerla
-      const imageId = project.acf?.['image-main']
-      if (imageId) {
-        try {
-          const imgResponse = await fetch(`https://cms.construcasamoderna.com/wp-json/wp/v2/media/${imageId}`)
-          const imgData = await imgResponse.json()
-          imageUrl = imgData.source_url || imageUrl
-        } catch (error) {
-          console.error(`Error al cargar imagen ${imageId}:`, error)
-        }
-      }
-      
-      return {
-        id: project.id,
-        slug: project.slug,
-        title: project.title.rendered,
-        description: project.acf?.['descripcion-proyecto'] || '',
-        year: project.acf?.['year-proyecto'] || '',
-        image: imageUrl
-      }
+    // Primero mapear proyectos sin imágenes
+    projects.value = data.map((project) => ({
+      id: project.id,
+      slug: project.slug,
+      title: project.title.rendered,
+      description: project.acf?.['descripcion-proyecto'] || '',
+      year: project.acf?.['year-proyecto'] || '',
+      image: '/images/portfolioHero.png' // Temporal
     }))
+    
+    // Recolectar todos los IDs de imágenes únicos
+    const imageIds = [...new Set(
+      data
+        .map(p => p.acf?.['image-main'])
+        .filter(id => id)
+    )]
+    
+    console.log('IDs de imágenes a cargar:', imageIds.length)
+    
+    // Cargar todas las imágenes en UNA SOLA llamada usando el parámetro include
+    if (imageIds.length > 0) {
+      const imgResponse = await fetch(
+        `${API_BASE_URL}/media?include=${imageIds.join(',')}&per_page=100`
+      )
+      const images = await imgResponse.json()
+      
+      // Crear mapa de ID -> URL para búsqueda rápida
+      const imageMap = {}
+      images.forEach(img => {
+        imageMap[img.id] = img.source_url
+      })
+      
+      // Actualizar proyectos con las URLs de imágenes
+      projects.value = projects.value.map((project) => {
+        const originalProject = data.find(p => p.id === project.id)
+        const imageId = originalProject?.acf?.['image-main']
+        
+        return {
+          ...project,
+          image: imageMap[imageId] || project.image
+        }
+      })
+    }
   } catch (error) {
     console.error('Error al consumir la API:', error)
   } finally {
