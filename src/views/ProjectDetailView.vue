@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import HomeNavbar from '../components/HomeNavbar.vue'
 import HomeContactFooter from '../components/HomeContactFooter.vue'
+import ImageGallery from '../components/ImageGallery.vue'
 
 const props = defineProps({
   id: {
@@ -10,91 +11,154 @@ const props = defineProps({
   }
 })
 
-// Configuración de proyectos
-const projectsData = {
-  '1': {
-    category: 'CATEGORÍA 1',
-    name: 'Tres Pinos',
-    heroImage: '/images/trespinos/img1.png',
-    client: 'Nombre del cliente',
-    year: '2023',
-    location: 'LOCDEMÍA',
-    area: '2085 M2',
-    services: '8',
-    description: 'Mosuida dictumst arcu cursus rutrum magna volutpat ornare ac justo lacus, ac mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum eros elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus.',
-    descriptionContinued: 'Praesent auctor justo justo sed nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in elementum tellus.',
-    galleryImages: [
-      '/images/trespinos/img1.png',
-      '/images/trespinos/img2.png',
-      '/images/trespinos/img3.png',
-      '/images/trespinos/img4.png',
-      '/images/trespinos/img5.png',
-      '/images/trespinos/img6.png',
-      '/images/trespinos/img7.png',
-      '/images/trespinos/img8.png',
-      '/images/trespinos/img9.png'
-    ]
-  }
-}
-
-// Datos de ejemplo para proyectos no configurados
-const defaultProject = {
-  category: 'CATEGORÍA',
-  name: `Nombre del proyecto #${props.id}`,
+const project = ref({
+  category: 'PROYECTO',
+  name: '',
   heroImage: '/images/portfolioHero.png',
   client: 'Nombre del cliente',
-  year: '2023',
+  year: '',
   location: 'LOCDEMÍA',
   area: '2085 M2',
   services: '8',
-  description: 'Mosuida dictumst arcu cursus rutrum magna volutpat ornare ac justo lacus, ac mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum eros elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus.',
-  descriptionContinued: 'Praesent auctor justo justo sed nisl, eu tempor urna. Curabitur vel bibendum lorem. Morbi convallis convallis diam sit amet lacinia. Aliquam in elementum tellus.',
+  description: '',
+  descriptionContinued: '',
   galleryImages: []
+})
+
+const isLoading = ref(true)
+const relatedProjects = ref([])
+
+// Helper function para cargar imágenes en paralelo
+const fetchImageUrl = async (imageId, defaultUrl = '/images/portfolioHero.png') => {
+  if (!imageId) return defaultUrl
+  try {
+    const response = await fetch(`https://cms.construcasamoderna.com/wp-json/wp/v2/media/${imageId}`)
+    const data = await response.json()
+    return data.source_url || defaultUrl
+  } catch (error) {
+    console.error(`Error al cargar imagen ${imageId}:`, error)
+    return defaultUrl
+  }
 }
 
-const project = computed(() => projectsData[props.id] || defaultProject)
-
-// Debug: verificar qué proyecto se está cargando
-console.log('Project ID:', props.id)
-console.log('Project data:', project.value)
-
-const relatedProjects = ref([
-  {
-    id: '1',
-    name: 'Tres Pinos',
-    image: '/images/trespinos/img1.png'
-  },
-  {
-    id: '2',
-    name: 'Nombre del proyecto arquitectónico',
-    image: '/images/portfolioHero.png'
-  },
-  {
-    id: '3',
-    name: 'Nombre del proyecto arquitectónico',
-    image: '/images/portfolioHero.png'
+// Cargar proyecto desde la API
+onMounted(async () => {
+  try {
+    // Obtener datos del proyecto y proyectos relacionados en paralelo
+    const [projectData, projectsData] = await Promise.all([
+      fetch(`https://cms.construcasamoderna.com/wp-json/wp/v2/proyecto/${props.id}`).then(r => r.json()),
+      fetch('https://cms.construcasamoderna.com/wp-json/wp/v2/proyecto').then(r => r.json())
+    ])
+    
+    console.log('Project data from API:', projectData)
+    
+    // Recolectar todos los IDs de imágenes que necesitamos cargar
+    const imageIds = []
+    
+    // Imagen principal
+    const mainImageId = projectData.acf?.['image-main']
+    if (mainImageId) imageIds.push(mainImageId)
+    
+    // Imágenes de galería
+    const imagenesDetalle = projectData.acf?.['imagen-detalle']
+    const galleryImageIds = []
+    if (imagenesDetalle) {
+      for (let i = 1; i <= 9; i++) {
+        const imgId = imagenesDetalle[`image${i}`]
+        if (imgId) {
+          galleryImageIds.push(imgId)
+          imageIds.push(imgId)
+        }
+      }
+    }
+    
+    // Imágenes de proyectos relacionados
+    const relatedProjectsData = projectsData
+      .filter(p => p.id !== parseInt(props.id))
+      .slice(0, 3)
+    
+    const relatedImageIds = relatedProjectsData
+      .map(p => p.acf?.['image-main'])
+      .filter(Boolean)
+    
+    imageIds.push(...relatedImageIds)
+    
+    // Cargar TODAS las imágenes en paralelo
+    const imageUrls = await Promise.all(
+      imageIds.map(id => fetchImageUrl(id))
+    )
+    
+    // Mapear las URLs a sus respectivos usos
+    let imageIndex = 0
+    const heroImage = mainImageId ? imageUrls[imageIndex++] : '/images/portfolioHero.png'
+    const galleryImages = galleryImageIds.map(() => imageUrls[imageIndex++])
+    
+    // Actualizar proyecto con datos básicos primero (renderizado más rápido)
+    project.value = {
+      category: 'PROYECTO',
+      name: projectData.title.rendered,
+      heroImage: heroImage,
+      client: projectData.acf?.['nombre-cliente'] || 'Nombre del cliente',
+      year: projectData.acf?.['year-proyecto'] || '',
+      location: projectData.acf?.['ubicacion'] || 'LOCDEMÍA',
+      area: projectData.acf?.['area'] || '2085 M2',
+      structure: projectData.acf?.['estructura'] || null,
+      bedrooms: projectData.acf?.['habitaciones'] || null,
+      bathrooms: projectData.acf?.['banos'] || null,
+      description: projectData.acf?.['description'] || '',
+      descriptionContinued: projectData.acf?.['descripcion-extendida'] || '',
+      galleryImages: galleryImages
+    }
+    
+    // Mapear proyectos relacionados con sus imágenes
+    relatedProjects.value = relatedProjectsData.map((p, idx) => {
+      const imgId = p.acf?.['image-main']
+      const image = imgId ? imageUrls[imageIndex++] : '/images/portfolioHero.png'
+      return {
+        id: p.id,
+        name: p.title.rendered,
+        image: image
+      }
+    })
+    
+  } catch (error) {
+    console.error('Error al cargar el proyecto:', error)
+  } finally {
+    isLoading.value = false
   }
-])
+})
 </script>
 
 <template>
   <!-- Navbar -->
   <HomeNavbar />
 
-  <!-- Hero Section -->
-  <section class="relative w-full h-96">
-    <img
-      :src="project.heroImage"
-      alt="Proyecto"
-      class="w-full h-full object-cover"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-8">
-      <div class="text-white">
-        <p class="text-sm tracking-widest mb-2">{{ project.category }}</p>
-        <h1 class="text-4xl font-bold">{{ project.name }}</h1>
+  <!-- Loading State -->
+  <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-orange-500 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+        <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Cargando...</span>
       </div>
+      <p class="mt-4 text-gray-600 font-medium">Cargando proyecto...</p>
     </div>
-  </section>
+  </div>
+
+  <!-- Project Content -->
+  <div v-else>
+    <!-- Hero Section -->
+    <section class="relative w-full h-96">
+      <img
+        :src="project.heroImage"
+        alt="Proyecto"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-8">
+        <div class="text-white">
+          <p class="text-sm tracking-widest mb-2">{{ project.category }}</p>
+          <h1 class="text-4xl font-bold">{{ project.name }}</h1>
+        </div>
+      </div>
+    </section>
 
    <!-- About Project Section (three columns: title, description, technical card) -->
   <section class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[100px_1fr_300px] gap-8 items-start">
@@ -158,26 +222,10 @@ const relatedProjects = ref([
   </section>
 
   <!-- Project Gallery -->
-  <section class="max-w-7xl mx-auto px-6 py-16">
-    <div v-if="project.galleryImages && project.galleryImages.length > 0" class="grid grid-cols-3 gap-4">
-      <div v-for="(img, index) in project.galleryImages" :key="index" class="w-full">
-        <img
-          :src="img"
-          :alt="`${project.name} - Imagen ${index + 1}`"
-          class="w-full h-64 object-cover"
-        />
-      </div>
-    </div>
-    <div v-else class="grid grid-cols-3 gap-4">
-      <div v-for="i in 6" :key="i" class="w-full">
-        <img
-          src="https://via.placeholder.com/300x200.png?text=proyecto"
-          alt="Proyecto galería"
-          class="w-full h-64 object-cover"
-        />
-      </div>
-    </div>
-  </section>
+  <ImageGallery 
+    :images="project.galleryImages" 
+    :alt-prefix="project.name"
+  />
 
   <!-- Project Plans Section -->
   <!-- <section class="bg-gray-100 py-16">
@@ -211,27 +259,29 @@ const relatedProjects = ref([
     </div>
   </section> -->
 
-  <!-- Other Projects Section -->
-  <section class="max-w-7xl mx-auto px-6 py-16">
-    <h2 class="text-3xl font-bold text-center mb-12">Mira otros proyectos</h2>
-    <div class="grid grid-cols-3 gap-6">
-      <div
-        v-for="proj in relatedProjects"
-        :key="proj.id"
-        class="relative group overflow-hidden rounded"
-      >
-        <img
-          :src="proj.image"
-          alt="Proyecto relacionado"
-          class="w-full h-64 object-cover group-hover:opacity-80 transition-opacity"
-        />
-        <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-6 text-white">
-          <h3 class="font-bold">{{ proj.name }}</h3>
-        </div>
+    <!-- Other Projects Section -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+      <h2 class="text-3xl font-bold text-center mb-12">Mira otros proyectos</h2>
+      <div class="grid grid-cols-3 gap-6">
+        <router-link
+          v-for="proj in relatedProjects"
+          :key="proj.id"
+          :to="{ name: 'project-detail', params: { id: proj.id } }"
+          class="relative group overflow-hidden rounded cursor-pointer"
+        >
+          <img
+            :src="proj.image"
+            alt="Proyecto relacionado"
+            class="w-full h-64 object-cover group-hover:opacity-80 transition-opacity"
+          />
+          <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-6 text-white">
+            <h3 class="font-bold">{{ proj.name }}</h3>
+          </div>
+        </router-link>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Contact Section (reutilizando homeContactFooter) -->
-  <HomeContactFooter />
+    <!-- Contact Section (reutilizando homeContactFooter) -->
+    <HomeContactFooter />
+  </div>
 </template>
