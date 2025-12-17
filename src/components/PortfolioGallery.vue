@@ -14,7 +14,6 @@ onMounted(async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/proyecto`)
     const data = await response.json()
-    console.log('Cantidad de proyectos en la API:', data.length)
     
     // Primero mapear proyectos sin imágenes
     projects.value = data.map((project) => ({
@@ -32,8 +31,6 @@ onMounted(async () => {
         .map(p => p.acf?.['image-main'])
         .filter(id => id)
     )]
-    
-    console.log('IDs de imágenes a cargar:', imageIds.length)
     
     // Cargar todas las imágenes en UNA SOLA llamada usando el parámetro include
     if (imageIds.length > 0) {

@@ -62,7 +62,7 @@ onUnmounted(() => {
 <template>
   <!-- Gallery Grid -->
   <section class="max-w-7xl mx-auto px-6 py-16">
-    <div v-if="images && images.length > 0" class="grid grid-cols-3 gap-4">
+    <div v-if="images && images.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div 
         v-for="(img, index) in images" 
         :key="index" 
@@ -81,7 +81,7 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
-    <div v-else class="grid grid-cols-3 gap-4">
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="i in 6" :key="i" class="w-full">
         <img
           src="https://via.placeholder.com/300x200.png?text=proyecto"
