@@ -80,7 +80,7 @@ onMounted(async () => {
         <!-- Overlay on hover: reveal with left->right wipe -->
         <div class="absolute inset-0 flex items-center justify-start">
           <!-- White panel with orange stripe that expands from left to right -->
-          <div class="relative ml-4 h-auto w-0 group-hover:w-90 transition-all duration-300 ease-out overflow-hidden">
+          <div class="relative ml-4 h-auto w-0 group-hover:w-80 transition-all duration-300 ease-out overflow-hidden">
             <!-- White background container with shadow -->
             <div class="bg-white shadow-lg flex items-stretch h-full min-h-[120px]">
               <!-- Orange stripe on the left, full height -->
