@@ -17,6 +17,7 @@ import HomeContactFooter from '../components/HomeContactFooter.vue'
       <HomeAbout />
       <HomeProjects 
         :image-src="'/images/home/cta1.jpg'"
+        button-href="/proyectos"
       />
       <HomeServices />
       <!-- Reutilización del componente HomeProjects con contenido distinto -->
@@ -27,7 +28,7 @@ import HomeContactFooter from '../components/HomeContactFooter.vue'
         button-text="AGENDAR REUNIÓN"
         :image-src="'/images/home/cta2.jpg'"
         image-alt="Proyecto residencial"
-        button-href="#projects"
+        button-href="#contact"
       />
       <HomeFeaturedProjects />
       <HomeTestimonials />
