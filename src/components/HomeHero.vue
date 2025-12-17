@@ -69,24 +69,39 @@ let autoPlayInterval = null
 // Datos de los slides
 const slides = ref([
   {
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=800&fit=crop',
+    image: '/images/home/hero/img6.jpg',
     title: 'Elegancia Moderna',
     subtitle: 'Espacios de trabajo que inspiran creatividad y productividad'
   },
   {
-    image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1200&h=800&fit=crop',
+    image: '/images/home/hero/img2.jpg',
     title: 'Diseño Profesional',
     subtitle: 'Ambientes innovadores para tu empresa'
   },
   {
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
+    image: '/images/home/hero/img3.jpg',
     title: 'Calidad Premium',
     subtitle: 'Construimos espacios de excelencia'
   },
   {
-    image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&h=800&fit=crop',
+    image: '/images/home/hero/img4.png',
     title: 'Innovación Constante',
     subtitle: 'Soluciones modernas para tus proyectos'
+  },
+  {
+    image: '/images/home/hero/img5.jpg',
+    title: 'Arquitectura Contemporánea',
+    subtitle: 'Diseños únicos que transforman espacios'
+  },
+  {
+    image: '/images/home/hero/img1.png',
+    title: 'Experiencia y Confianza',
+    subtitle: 'Años de experiencia en construcción moderna'
+  },
+  {
+    image: '/images/home/hero/img7.png',
+    title: 'Tu Visión, Nuestra Pasión',
+    subtitle: 'Hacemos realidad tus proyectos más ambiciosos'
   }
 ])
 

@@ -4,6 +4,8 @@ import HomeNavbar from '../components/HomeNavbar.vue'
 import HomeContactFooter from '../components/HomeContactFooter.vue'
 import ImageGallery from '../components/ImageGallery.vue'
 
+const API_BASE_URL = `https://${import.meta.env.VITE_WP_DOMAIN}/wp-json/wp/v2`
+
 const props = defineProps({
   id: {
     type: String,
@@ -32,7 +34,7 @@ const relatedProjects = ref([])
 const fetchImageUrl = async (imageId, defaultUrl = '/images/portfolioHero.png') => {
   if (!imageId) return defaultUrl
   try {
-    const response = await fetch(`https://cms.construcasamoderna.com/wp-json/wp/v2/media/${imageId}`)
+    const response = await fetch(`${API_BASE_URL}/media/${imageId}`)
     const data = await response.json()
     return data.source_url || defaultUrl
   } catch (error) {
@@ -46,8 +48,8 @@ onMounted(async () => {
   try {
     // Obtener datos del proyecto y proyectos relacionados en paralelo
     const [projectData, projectsData] = await Promise.all([
-      fetch(`https://cms.construcasamoderna.com/wp-json/wp/v2/proyecto/${props.id}`).then(r => r.json()),
-      fetch('https://cms.construcasamoderna.com/wp-json/wp/v2/proyecto').then(r => r.json())
+      fetch(`${API_BASE_URL}/proyecto/${props.id}`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/proyecto`).then(r => r.json())
     ])
     
     console.log('Project data from API:', projectData)
