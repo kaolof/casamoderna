@@ -21,7 +21,7 @@
           ></div>
 
           <!-- Overlay -->
-          <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-all duration-300"></div>
+          <div class="absolute inset-0 bg-opacity-40 group-hover:bg-opacity-50 transition-all duration-300"></div>
 
           <!-- Content -->
           <div class="absolute inset-0 flex flex-col justify-end p-8">
