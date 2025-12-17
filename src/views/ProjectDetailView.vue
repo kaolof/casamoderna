@@ -52,8 +52,6 @@ onMounted(async () => {
       fetch(`${API_BASE_URL}/proyecto`).then(r => r.json())
     ])
     
-    console.log('Project data from API:', projectData)
-    
     // Recolectar todos los IDs de imágenes que necesitamos cargar
     const imageIds = []
     
@@ -264,7 +262,7 @@ onMounted(async () => {
     <!-- Other Projects Section -->
     <section class="max-w-7xl mx-auto px-6 py-16">
       <h2 class="text-3xl font-bold text-center mb-12">Mira otros proyectos</h2>
-      <div class="grid grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <router-link
           v-for="proj in relatedProjects"
           :key="proj.id"
