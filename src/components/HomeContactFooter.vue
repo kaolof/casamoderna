@@ -59,14 +59,12 @@
                 class="w-full bg-white px-4 py-3 border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none h-40"
                 required
               ></textarea>
-              <div class="flex justify-end">
-                <button
-                  type="submit"
-                  class="bg-orange-500 text-white px-6 py-3 font-semibold hover:bg-orange-600 transition rounded"
-                >
-                  Enviar
-                </button>
-              </div>
+              <button
+                type="submit"
+                class="w-full px-12 py-4 border-2 border-white text-white font-bold tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+              >
+                ENVIAR
+              </button>
             </form>
           </div>
         </div>
@@ -86,15 +84,15 @@
         <!-- Contact Info -->
         <div class="w-full md:w-1/2 text-center md:text-right space-y-2">
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
-            <Phone class="h-5 w-5 text-blue-600" />
+            <Phone class="h-5 w-5 text-orange-500" />
             <span>+58 000 000 0000</span>
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
-            <Mail class="h-5 w-5 text-blue-600" />
+            <Mail class="h-5 w-5 text-orange-500" />
             <span>info@construcasaomodern.com</span>
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
-            <MapPin class="h-5 w-5 text-blue-600" />
+            <MapPin class="h-5 w-5 text-orange-500" />
             <span>Dirección</span>
           </div>
         </div>
@@ -105,7 +103,7 @@
     <div class="bg-black text-white py-6 px-8">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-sm text-gray-400 text-center md:text-left">© CONSTRUSERVICIOS CASAMODERNA. Todos los derechos reservados.</p>
-        <p class="text-sm text-gray-400 text-center md:text-right">Desarrollado por</p>
+        <p class="text-sm text-gray-400 text-center md:text-right">Desarrollado por Tkwebspace</p>
       </div>
     </div>
   </div>

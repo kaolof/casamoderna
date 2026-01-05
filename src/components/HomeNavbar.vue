@@ -3,10 +3,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex items-center justify-between gap-4">
         <!-- Logo -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2 text-gray-900">
+        <router-link to="/" class="flex flex-col sm:flex-row sm:items-center sm:gap-2 text-gray-900 cursor-pointer hover:opacity-80 transition-opacity">
           <span class="text-xs sm:text-sm font-light italic text-gray-600">CONSTRUSERVICIOS</span>
           <span class="text-lg font-bold tracking-wide">CASA MODERNA</span>
-        </div>
+        </router-link>
 
         <button
           type="button"

@@ -19,7 +19,7 @@
           >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <!-- Testimonial 1 -->
-              <div class="bg-white p-8 rounded-lg">
+              <div class="bg-white p-8">
                 <div class="flex items-center mb-6">
                   <img
                     :src="testimonials[currentTestimonial].avatar"
@@ -37,7 +37,7 @@
               <!-- Testimonial 2 (if exists) -->
               <div
                 v-if="currentTestimonial + 1 < testimonials.length"
-                class="bg-white p-8 rounded-lg"
+                class="bg-white p-8"
               >
                 <div class="flex items-center mb-6">
                   <img
