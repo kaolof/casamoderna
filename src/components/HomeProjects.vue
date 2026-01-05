@@ -78,7 +78,7 @@ const props = defineProps({
   },
   heightClasses: {
     type: String,
-    default: 'h-[260px] md:h-[360px]',
+    default: 'h-[450px] md:h-[550px]',
   },
 })
 

@@ -11,7 +11,7 @@
 
       <!-- Services Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div v-for="service in services" :key="service.id" class="bg-gray-100 p-8 rounded-lg">
+        <div v-for="service in services" :key="service.id" class="bg-gray-100 p-8">
           <p class="text-2xl mb-3">★</p>
           <h3 class="font-bold text-black mb-3">SERVICIOS</h3>
           <p class="text-gray-600 text-sm leading-relaxed">{{ service.description }}</p>
