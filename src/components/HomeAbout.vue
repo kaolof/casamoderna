@@ -8,7 +8,7 @@
           <img
             src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=600&fit=crop"
             alt="Profesional de arquitectura"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
         </div>
 
@@ -17,7 +17,7 @@
           <img
             src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&h=1200&fit=crop"
             alt="Diseño interior con plantas"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
           <div class="absolute top-6 right-6 bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-semibold tracking-[0.3em] text-gray-800">
             +15 AÑOS
@@ -29,7 +29,7 @@
           <img
             src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=600&fit=crop"
             alt="Proyecto arquitectónico moderno"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
         </div>
       </div>
@@ -41,25 +41,30 @@
         </p>
         <p class="text-lg text-gray-600 font-light tracking-wide uppercase">Tu visión, nuestra pasión</p>
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight text-balance">
-          Arquitectura con propósito
+          Soluciones integrales en arquitectura e ingeniería
         </h2>
         <p class="text-gray-700 leading-relaxed text-base">
-          Creamos espacios que cuentan historias, combinando materiales nobles, confort térmico y luz natural. Nuestro equipo acompaña cada etapa del proyecto, desde la idea inicial hasta la entrega final, cuidando presupuestos y cronogramas.
+          En Construservicios Casamoderna desarrollamos proyectos residenciales, 
+          comerciales e industriales desde el diseño hasta la ejecución y 
+          mantenimiento. Integramos arquitectura, ingeniería y construcción 
+          bajo una misma visión, garantizando espacios funcionales, eficientes 
+          y seguros. Acompañamos cada fase con enfoque técnico, cuidando calidad, 
+          normativas y necesidades específicas de cada cliente.
         </p>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-4">
+        <!-- <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 pt-4">
           <div>
-            <p class="text-3xl font-semibold text-orange-500">150+</p>
+            <p class="text-3xl font-semibold text-orange-500 transition-all duration-300 cursor-pointer hover:text-white hover:[text-shadow:_-1px_-1px_0_#f97316,_1px_-1px_0_#f97316,_-1px_1px_0_#f97316,_1px_1px_0_#f97316]">150+</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Proyectos</p>
           </div>
           <div>
-            <p class="text-3xl font-semibold text-orange-500">25</p>
+            <p class="text-3xl font-semibold text-orange-500 transition-all duration-300 cursor-pointer hover:text-white hover:[text-shadow:_-1px_-1px_0_#f97316,_1px_-1px_0_#f97316,_-1px_1px_0_#f97316,_1px_1px_0_#f97316]">25</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Especialistas</p>
           </div>
           <div>
-            <p class="text-3xl font-semibold text-orange-500">12</p>
+            <p class="text-3xl font-semibold text-orange-500 transition-all duration-300 cursor-pointer hover:text-white hover:[text-shadow:_-1px_-1px_0_#f97316,_1px_-1px_0_#f97316,_-1px_1px_0_#f97316,_1px_1px_0_#f97316]">12</p>
             <p class="text-xs uppercase tracking-wide text-gray-500">Ciudades</p>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>

@@ -98,15 +98,11 @@ onMounted(async () => {
       category: 'PROYECTO',
       name: projectData.title.rendered,
       heroImage: heroImage,
-      client: projectData.acf?.['nombre-cliente'] || 'Nombre del cliente',
-      year: projectData.acf?.['year-proyecto'] || '',
-      location: projectData.acf?.['ubicacion'] || 'LOCDEMÍA',
-      area: projectData.acf?.['area'] || '2085 M2',
-      structure: projectData.acf?.['estructura'] || null,
-      bedrooms: projectData.acf?.['habitaciones'] || null,
-      bathrooms: projectData.acf?.['banos'] || null,
-      description: projectData.acf?.['description'] || '',
-      descriptionContinued: projectData.acf?.['descripcion-extendida'] || '',
+      client: projectData.acf?.['nombre-cliente'] || "-",
+      year: projectData.acf?.['year-proyecto'] || '-',
+      location: projectData.acf?.['ubicacion'] || '-',
+      area: projectData.acf?.['area'] || '-',
+      description: projectData.acf?.['description'] || '-',
       galleryImages: galleryImages
     }
     
@@ -202,20 +198,6 @@ onMounted(async () => {
         <div>
           <p class="text-xs text-gray-500 mb-1">Área</p>
           <p class="font-bold text-sm">{{ project.area }}</p>
-        </div>
-        <div>
-          <p class="text-xs text-gray-500 mb-1">Estructura</p>
-          <p class="font-bold text-sm">{{ project.structure ?? '—' }}</p>
-        </div>
-        <div class="flex gap-6">
-          <div>
-            <p class="text-xs text-gray-500 mb-1">Habitaciones</p>
-            <p class="font-bold text-sm">{{ project.bedrooms ?? '—' }}</p>
-          </div>
-          <div>
-            <p class="text-xs text-gray-500 mb-1">Baños</p>
-            <p class="font-bold text-sm">{{ project.bathrooms ?? '—' }}</p>
-          </div>
         </div>
       </div>
     </aside>
