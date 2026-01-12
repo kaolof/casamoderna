@@ -15,4 +15,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // Configuración para incluir contact.php en el build
+  publicDir: 'public',
 })

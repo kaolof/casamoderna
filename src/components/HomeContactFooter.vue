@@ -61,11 +61,23 @@
               ></textarea>
               <button
                 type="submit"
-                class="w-full px-12 py-4 border-2 border-white text-white font-bold tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+                :disabled="isSubmitting"
+                class="w-full px-12 py-4 border-2 border-white text-white font-bold tracking-widest hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                ENVIAR
+                {{ isSubmitting ? 'ENVIANDO...' : 'ENVIAR' }}
               </button>
             </form>
+
+            <!-- Mensajes de éxito/error -->
+            <div v-if="statusMessage.text" class="mt-4 p-4 rounded" :class="{
+              'bg-green-100 border border-green-400 text-green-700': statusMessage.type === 'success',
+              'bg-red-100 border border-red-400 text-red-700': statusMessage.type === 'error'
+            }">
+              <p class="font-semibold">{{ statusMessage.text }}</p>
+              <ul v-if="statusMessage.errors && statusMessage.errors.length" class="mt-2 list-disc list-inside text-sm">
+                <li v-for="(error, index) in statusMessage.errors" :key="index">{{ error }}</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -113,6 +125,7 @@
 import { ref } from 'vue'
 import { Phone, Mail, MapPin } from 'lucide-vue-next'
 
+// Estado del formulario
 const form = ref({
   name: '',
   email: '',
@@ -120,10 +133,93 @@ const form = ref({
   message: ''
 })
 
-const handleSubmit = () => {
-  console.log('Formulario enviado:', form.value)
-  // Aquí iría la lógica para enviar el formulario
-  form.value = { name: '', email: '', phone: '', message: '' }
+// Estado de envío y mensajes
+const isSubmitting = ref(false)
+const statusMessage = ref({
+  text: '',
+  type: '', // 'success' o 'error'
+  errors: []
+})
+
+/**
+ * Maneja el envío del formulario de contacto
+ * Envía los datos a contact.php usando fetch con application/x-www-form-urlencoded
+ */
+const handleSubmit = async () => {
+  // Limpiar mensajes anteriores
+  statusMessage.value = { text: '', type: '', errors: [] }
+  isSubmitting.value = true
+
+  try {
+    // Preparar los datos en formato application/x-www-form-urlencoded
+    const formData = new URLSearchParams()
+    formData.append('name', form.value.name)
+    formData.append('email', form.value.email)
+    formData.append('phone', form.value.phone)
+    formData.append('message', form.value.message)
+
+    // Determinar la URL del endpoint según el entorno
+    // En desarrollo (npm run dev): usar la ruta del servidor de desarrollo
+    // En producción (después del build): usar la ruta relativa al dominio
+    const endpoint = import.meta.env.DEV 
+      ? '/contact.php'  // Vite proxy o servidor de desarrollo
+      : '/contact.php'  // En producción, el archivo estará en la raíz junto a index.html
+
+    // Enviar la solicitud POST
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    })
+
+    // Procesar la respuesta JSON
+    const data = await response.json()
+
+    if (data.success) {
+      // Éxito: mostrar mensaje de confirmación
+      statusMessage.value = {
+        text: data.message,
+        type: 'success',
+        errors: []
+      }
+
+      // Limpiar el formulario después de un envío exitoso
+      form.value = {
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      }
+
+      // Ocultar el mensaje de éxito después de 8 segundos
+      setTimeout(() => {
+        if (statusMessage.value.type === 'success') {
+          statusMessage.value = { text: '', type: '', errors: [] }
+        }
+      }, 8000)
+
+    } else {
+      // Error: mostrar mensaje de error y posibles validaciones
+      statusMessage.value = {
+        text: data.message || 'Hubo un error al enviar el formulario.',
+        type: 'error',
+        errors: data.errors || []
+      }
+    }
+
+  } catch (error) {
+    // Error de red o del servidor
+    console.error('Error al enviar el formulario:', error)
+    statusMessage.value = {
+      text: 'Error de conexión. Por favor, verifica tu conexión a internet e intenta nuevamente.',
+      type: 'error',
+      errors: []
+    }
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
