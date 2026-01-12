@@ -1,0 +1,12 @@
+# Habilitar el motor de reescritura
+RewriteEngine On
+
+# Permitir acceso directo a contact.php
+RewriteRule ^contact\.php$ - [L]
+
+# Permitir acceso a archivos y directorios existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todas las demás peticiones a index.html para el enrutamiento de Vue
+RewriteRule ^.*$ /index.html [L]
