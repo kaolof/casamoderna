@@ -24,11 +24,66 @@ const project = ref({
   services: '8',
   description: '',
   descriptionContinued: '',
+  technicalData: {
+    area: '',
+    constructionSystem: '',
+    levels: '',
+    mainInstallations: ''
+  },
+  developedServices: [],
+  projectStatus: '',
   galleryImages: []
 })
 
 const isLoading = ref(true)
 const relatedProjects = ref([])
+
+// Datos de prueba
+const mockProject = {
+  category: 'PROYECTO',
+  name: 'Casa Moderna Residencial',
+  heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+  client: 'Familia López',
+  year: '2024',
+  location: 'Ciudad de México',
+  area: '350 M2',
+  services: 'Construcción completa, diseño arquitectónico, diseño de interiores',
+  description: 'Este proyecto representa la perfecta fusión entre diseño contemporáneo y funcionalidad. La Casa Moderna Residencial fue diseñada para una familia joven que buscaba un espacio luminoso, amplio y conectado con el exterior.',
+  descriptionContinued: 'Se utilizaron materiales de primera calidad incluyendo concreto aparente, madera de nogal y grandes ventanales de piso a techo. El diseño incorpora conceptos de eficiencia energética y sustentabilidad, con paneles solares y sistemas de captación de agua pluvial.',
+  technicalData: {
+    area: '350 m²',
+    constructionSystem: 'Estructura de concreto armado con muros de block',
+    levels: '2 niveles',
+    mainInstallations: 'Eléctrica (220V trifásica), sanitaria (agua potable y drenaje), mecánica (climatización central con tecnología inverter), instalación solar (paneles fotovoltaicos 5kW)'
+  },
+  developedServices: ['Arquitectura', 'Ingeniería', 'Ejecución de obra', 'Supervisión', 'Gestión integral'],
+  projectStatus: 'Ejecutado',
+  galleryImages: [
+    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+    'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80',
+    'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80'
+  ]
+}
+
+const mockRelatedProjects = [
+  {
+    id: 2,
+    name: 'Villa Contemporánea',
+    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80'
+  },
+  {
+    id: 3,
+    name: 'Residencia Minimalista',
+    image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80'
+  },
+  {
+    id: 4,
+    name: 'Casa Jardín',
+    image: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80'
+  }
+]
 
 // Helper function para cargar imágenes en paralelo
 const fetchImageUrl = async (imageId, defaultUrl = '/images/portfolioHero.png') => {
@@ -55,19 +110,20 @@ onMounted(async () => {
     // Recolectar todos los IDs de imágenes que necesitamos cargar
     const imageIds = []
     
-    // Imagen principal
-    const mainImageId = projectData.acf?.['image-main']
-    if (mainImageId) imageIds.push(mainImageId)
-    
-    // Imágenes de galería
-    const imagenesDetalle = projectData.acf?.['imagen-detalle']
+    // Imagen principal (usar la primera imagen disponible del objeto imagenes)
+    const imagenesObj = projectData.acf?.imagenes
     const galleryImageIds = []
-    if (imagenesDetalle) {
+    let mainImageId = null
+    
+    if (imagenesObj) {
+      // Recolectar todas las imágenes del objeto imagenes (imagen1 a imagen9)
       for (let i = 1; i <= 9; i++) {
-        const imgId = imagenesDetalle[`image${i}`]
+        const imgId = imagenesObj[`imagen${i}`]
         if (imgId) {
           galleryImageIds.push(imgId)
           imageIds.push(imgId)
+          // La primera imagen será la imagen principal del hero
+          if (!mainImageId) mainImageId = imgId
         }
       }
     }
@@ -90,26 +146,37 @@ onMounted(async () => {
     
     // Mapear las URLs a sus respectivos usos
     let imageIndex = 0
-    const heroImage = mainImageId ? imageUrls[imageIndex++] : '/images/portfolioHero.png'
-    const galleryImages = galleryImageIds.map(() => imageUrls[imageIndex++])
+    const heroImage = mainImageId ? imageUrls[0] : '/images/portfolioHero.png' // La primera imagen es la portada
+    const galleryImages = galleryImageIds.map((_, i) => imageUrls[i]) // Incluir todas las imágenes (incluida la primera)
     
     // Actualizar proyecto con datos básicos primero (renderizado más rápido)
     project.value = {
-      category: 'PROYECTO',
+      category: projectData.acf?.categoria || 'PROYECTO',
       name: projectData.title.rendered,
       heroImage: heroImage,
-      client: projectData.acf?.['nombre-cliente'] || "-",
-      year: projectData.acf?.['year-proyecto'] || '-',
-      location: projectData.acf?.['ubicacion'] || '-',
-      area: projectData.acf?.['area'] || '-',
-      description: projectData.acf?.['description'] || '-',
+      client: projectData.acf?.ficha_tecnica?.cliente || "-",
+      year: projectData.acf?.ficha_tecnica?.year || '-',
+      location: projectData.acf?.ficha_tecnica?.ubicacion || '-',
+      area: projectData.acf?.datos_tecnicos?.area ? `${projectData.acf.datos_tecnicos.area} M²` : '-',
+      description: projectData.acf?.descripcion || '-',
+      technicalData: {
+        area: projectData.acf?.datos_tecnicos?.area ? `${projectData.acf.datos_tecnicos.area} m²` : '-',
+        constructionSystem: projectData.acf?.datos_tecnicos?.sistema_constructivo || '-',
+        levels: projectData.acf?.datos_tecnicos?.niveles || '-',
+        mainInstallations: projectData.acf?.datos_tecnicos?.principales_instalaciones || '-'
+      },
+      developedServices: Array.isArray(projectData.acf?.servicios_desarrollados) 
+        ? projectData.acf.servicios_desarrollados 
+        : [],
+      projectStatus: projectData.acf?.estado_del_proyecto || '-',
       galleryImages: galleryImages
     }
     
     // Mapear proyectos relacionados con sus imágenes
     relatedProjects.value = relatedProjectsData.map((p, idx) => {
       const imgId = p.acf?.['image-main']
-      const image = imgId ? imageUrls[imageIndex++] : '/images/portfolioHero.png'
+      const relatedImageIndex = galleryImageIds.length + idx // Ajustar el índice para imágenes relacionadas
+      const image = imgId ? imageUrls[relatedImageIndex] : '/images/portfolioHero.png'
       return {
         id: p.id,
         name: p.title.rendered,
@@ -119,8 +186,18 @@ onMounted(async () => {
     
   } catch (error) {
     console.error('Error al cargar el proyecto:', error)
+    // Si hay error, usar datos de prueba
+    project.value = mockProject
+    relatedProjects.value = mockRelatedProjects
   } finally {
     isLoading.value = false
+    // Si después de todo no hay datos, usar mock
+    if (!project.value.name || project.value.name === '') {
+      project.value = mockProject
+    }
+    if (relatedProjects.value.length === 0) {
+      relatedProjects.value = mockRelatedProjects
+    }
   }
 })
 </script>
@@ -160,9 +237,9 @@ onMounted(async () => {
   <section class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[100px_1fr_300px] gap-8 items-start">
     <!-- Column 1: Title with vertical orange bar -->
     <div class="flex items-start py-10">
-      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-3 flex-shrink-0"></div>
+      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
       <div>
-        <h2 class="text-xl font-bold">Acerca del proyecto</h2>
+        <h2 class="text-sm font-bold">Acerca del proyecto</h2>
       </div>
     </div>
 
@@ -171,36 +248,80 @@ onMounted(async () => {
       <p class="text-gray-600 leading-relaxed mb-6">
         {{ project.description }}
       </p>
-      <p class="text-gray-600 leading-relaxed">
-        {{ project.descriptionContinued }}
-      </p>
     </div>
 
-    <!-- Column 3: Technical card -->
-    <aside class="p-8 h-fit border border-gray-200" style="background-color: rgba(209,222,222,0.3);">
+    <!-- Column 3: Technical card (spans 4 rows) -->
+    <aside class="p-8 h-fit border border-gray-200 md:row-span-4" style="background-color: rgba(209,222,222,0.3);">
       <div class="space-y-4">
         <div>
-          <p class="text-xs text-gray-500 mb-1">Nombre</p>
-          <p class="font-bold text-sm">{{ project.client }}</p>
+          <p class="text-xs text-gray-500 mb-1">Proyecto</p>
+          <p class="font-bold text-sm">{{ project.name }}</p>
         </div>
         <div>
-          <p class="text-xs text-gray-500 mb-1">Categoría</p>
+          <p class="text-xs text-gray-500 mb-1">Tipo</p>
           <p class="font-bold text-sm">{{ project.category }}</p>
-        </div>
-        <div>
-          <p class="text-xs text-gray-500 mb-1">Año</p>
-          <p class="font-bold text-sm">{{ project.year }}</p>
         </div>
         <div>
           <p class="text-xs text-gray-500 mb-1">Ubicación</p>
           <p class="font-bold text-sm">{{ project.location }}</p>
         </div>
         <div>
-          <p class="text-xs text-gray-500 mb-1">Área</p>
-          <p class="font-bold text-sm">{{ project.area }}</p>
+          <p class="text-xs text-gray-500 mb-1">Año</p>
+          <p class="font-bold text-sm">{{ project.year }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-gray-500 mb-1">Cliente</p>
+          <p class="font-bold text-sm">{{ project.client }}</p>
         </div>
       </div>
     </aside>
+
+    <!-- Datos Técnicos Section - Row 2 -->
+    <div class="flex items-start pb-10">
+      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+      <div>
+        <h4 class="text-sm font-bold">Datos Técnicos</h4>
+      </div>
+    </div>
+
+    <div class="pb-10">
+      <div class="text-gray-600 leading-relaxed space-y-2">
+        <p><strong>Área:</strong> {{ project.technicalData.area }}</p>
+        <p><strong>Sistema constructivo:</strong> {{ project.technicalData.constructionSystem }}</p>
+        <p><strong>Niveles:</strong> {{ project.technicalData.levels }}</p>
+        <p><strong>Principales instalaciones:</strong> {{ project.technicalData.mainInstallations }}</p>
+      </div>
+    </div>
+
+    <!-- Servicios Desarrollados Section - Row 3 -->
+    <div class="flex items-start pb-10">
+      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+      <div>
+        <h4 class="text-sm font-bold">Servicios Desarrollados</h4>
+      </div>
+    </div>
+
+    <div class="pb-10">
+      <p class="text-gray-600 leading-relaxed">
+        <span class="text-gray-600">
+          {{ Array.isArray(project.developedServices) ? project.developedServices.join(' · ') : project.developedServices }}
+        </span>
+      </p>
+    </div>
+
+    <!-- Estado del Proyecto Section - Row 4 -->
+    <div class="flex items-start pb-10">
+      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+      <div>
+        <h4 class="text-sm font-bold">Estado del Proyecto</h4>
+      </div>
+    </div>
+
+    <div class="pb-10">
+      <p class="text-gray-600 font-bold">
+        {{ project.projectStatus }}
+      </p>
+    </div>
   </section>
 
   <!-- Project Gallery -->

@@ -93,9 +93,9 @@ onMounted(async () => {
     const response = await fetch(`${API_BASE_URL}/proyecto?per_page=3`)
     const projectsData = await response.json()
     
-    // Cargar todas las imágenes en paralelo
+    // Cargar todas las imágenes en paralelo (usar imagen1 como portada)
     const imageIds = projectsData
-      .map(p => p.acf?.['image-main'])
+      .map(p => p.acf?.imagenes?.imagen1)
       .filter(Boolean)
     
     const imageUrls = await Promise.all(
