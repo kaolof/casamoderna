@@ -20,7 +20,7 @@
             class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
           <div class="absolute top-6 right-6 bg-white/90 backdrop-blur px-4 py-2 rounded-full text-xs font-semibold tracking-[0.3em] text-gray-800">
-            +15 AÑOS
+            +9 AÑOS
           </div>
         </div>
 

@@ -9,6 +9,19 @@ const categories = ['CATEGORÍA 1','CATEGORÍA 2','CATEGORÍA 3','CATEGORÍA 4',
 const projects = ref([])
 const isLoading = ref(true)
 
+// Datos de prueba para testear
+const mockProjects = [
+  {
+    id: 1,
+    slug: 'casa-moderna-residencial',
+    title: 'Casa Moderna Residencial',
+    category: 'RESIDENCIAL',
+    description: 'Proyecto de construcción de una casa moderna con diseño minimalista, amplios espacios y acabados de primera calidad.',
+    year: '2024',
+    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80'
+  }
+]
+
 // Consumir API de WordPress
 onMounted(async () => {
   try {
@@ -20,15 +33,16 @@ onMounted(async () => {
       id: project.id,
       slug: project.slug,
       title: project.title.rendered,
+      category: project.acf?.categoria || 'PROYECTO',
       description: project.acf?.['descripcion-proyecto'] || '',
       year: project.acf?.['year-proyecto'] || '',
       image: '/images/portfolioHero.png' // Temporal
     }))
     
-    // Recolectar todos los IDs de imágenes únicos
+    // Recolectar todos los IDs de imágenes únicos (usar imagen1 como portada)
     const imageIds = [...new Set(
       data
-        .map(p => p.acf?.['image-main'])
+        .map(p => p.acf?.imagenes?.imagen1)
         .filter(id => id)
     )]
     
@@ -48,7 +62,7 @@ onMounted(async () => {
       // Actualizar proyectos con las URLs de imágenes
       projects.value = projects.value.map((project) => {
         const originalProject = data.find(p => p.id === project.id)
-        const imageId = originalProject?.acf?.['image-main']
+        const imageId = originalProject?.acf?.imagenes?.imagen1
         
         return {
           ...project,
@@ -58,8 +72,16 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error al consumir la API:', error)
+    // Si hay error o no hay datos, usar proyectos de prueba
+    if (projects.value.length === 0) {
+      projects.value = mockProjects
+    }
   } finally {
     isLoading.value = false
+    // Si después de todo no hay proyectos, usar mock
+    if (projects.value.length === 0) {
+      projects.value = mockProjects
+    }
   }
 })
 </script>
@@ -115,7 +137,7 @@ onMounted(async () => {
               <div class="w-3 bg-orange-500 flex-shrink-0 self-stretch"></div>
               <!-- Text content that appears after animation -->
               <div class="pl-6 pr-8 py-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300">
-                <p class="text-xs uppercase text-gray-500 tracking-wider mb-1">{{ project.year }}</p>
+                <p class="text-xs uppercase text-gray-500 tracking-wider mb-1">{{ project.category }} · {{ project.year }}</p>
                 <h3 class="text-base font-bold whitespace-nowrap">{{ project.title }}</h3>
               </div>
             </div>

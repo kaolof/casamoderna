@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // ============================================================================
 
 // Dirección de correo donde recibirás los mensajes
-$to_email = 'kaochilanlo@gmail.com'; // ⚠️ CAMBIAR POR TU EMAIL REAL
+$to_email = 'info@construcasamoderna.com';
 
 // Asunto del correo
 $email_subject = 'Nuevo mensaje de contacto desde Construservicios Casamoderna';
@@ -150,8 +150,7 @@ $email_body = "
 
 // Preparar cabeceras del correo
 // IMPORTANTE: Usar un email del mismo dominio del hosting para evitar spam
-// Cambiar 'noreply@tudominio.com' por un email de tu dominio real
-$from_email = 'noreply@tudominio.com'; // ⚠️ CAMBIAR por un email de tu dominio
+$from_email = 'noreply@construcasamoderna.com'; 
 $from_name = 'Formulario Contacto - Casamoderna';
 
 $headers = [];
