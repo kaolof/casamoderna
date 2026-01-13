@@ -1,26 +1,27 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const API_BASE_URL = `https://${import.meta.env.VITE_WP_DOMAIN}/wp-json/wp/v2`
 
-const categories = ['CATEGORÍA 1','CATEGORÍA 2','CATEGORÍA 3','CATEGORÍA 4','CATEGORÍA 5']
+const categories = ['TODOS', 'ACADEMICO', 'RESIDENCIAL']
 
 // Proyectos desde la API
 const projects = ref([])
 const isLoading = ref(true)
+const selectedCategory = ref('TODOS')
 
-// Datos de prueba para testear
-const mockProjects = [
-  {
-    id: 1,
-    slug: 'casa-moderna-residencial',
-    title: 'Casa Moderna Residencial',
-    category: 'RESIDENCIAL',
-    description: 'Proyecto de construcción de una casa moderna con diseño minimalista, amplios espacios y acabados de primera calidad.',
-    year: '2024',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80'
+// Filtrar proyectos según categoría seleccionada
+const filteredProjects = computed(() => {
+  if (selectedCategory.value === 'TODOS') {
+    return projects.value
   }
-]
+  return projects.value.filter(p => p.category === selectedCategory.value)
+})
+
+// Función para cambiar categoría
+const selectCategory = (category) => {
+  selectedCategory.value = category
+}
 
 // Consumir API de WordPress
 onMounted(async () => {
@@ -29,15 +30,23 @@ onMounted(async () => {
     const data = await response.json()
     
     // Primero mapear proyectos sin imágenes
-    projects.value = data.map((project) => ({
-      id: project.id,
-      slug: project.slug,
-      title: project.title.rendered,
-      category: project.acf?.categoria || 'PROYECTO',
-      description: project.acf?.['descripcion-proyecto'] || '',
-      year: project.acf?.['year-proyecto'] || '',
-      image: '/images/portfolioHero.png' // Temporal
-    }))
+    projects.value = data.map((project) => {
+      const rawCategory = project.acf?.categoria || 'PROYECTO'
+      // Normalizar categoría: convertir a mayúsculas y quitar espacios
+      const normalizedCategory = rawCategory.toString().toUpperCase().trim()
+      
+      console.log('Proyecto:', project.title.rendered, '| Categoría original:', rawCategory, '| Normalizada:', normalizedCategory)
+      
+      return {
+        id: project.id,
+        slug: project.slug,
+        title: project.title.rendered,
+        category: normalizedCategory,
+        description: project.acf?.['descripcion-proyecto'] || '',
+        year: project.acf?.['year-proyecto'] || '',
+        image: '/images/portfolioHero.png' // Temporal
+      }
+    })
     
     // Recolectar todos los IDs de imágenes únicos (usar imagen1 como portada)
     const imageIds = [...new Set(
@@ -72,16 +81,8 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error al consumir la API:', error)
-    // Si hay error o no hay datos, usar proyectos de prueba
-    if (projects.value.length === 0) {
-      projects.value = mockProjects
-    }
   } finally {
     isLoading.value = false
-    // Si después de todo no hay proyectos, usar mock
-    if (projects.value.length === 0) {
-      projects.value = mockProjects
-    }
   }
 })
 </script>
@@ -91,7 +92,19 @@ onMounted(async () => {
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-sm font-semibold tracking-wide">TODOS LOS PROYECTOS</h2>
       <nav class="space-x-4 text-sm">
-        <button v-for="(c, i) in categories" :key="i" class="text-black hover:text-orange-500 transition-colors">{{ c }}</button>
+        <button 
+          v-for="(c, i) in categories" 
+          :key="i" 
+          @click="selectCategory(c)"
+          :class="[
+            'transition-colors font-medium',
+            selectedCategory === c 
+              ? 'text-orange-500 border-b-2 border-orange-500' 
+              : 'text-black hover:text-orange-500'
+          ]"
+        >
+          {{ c }}
+        </button>
       </nav>
     </div>
     <hr class="border-t border-black mb-6" />
@@ -107,20 +120,20 @@ onMounted(async () => {
     </div>
 
     <!-- No Projects State -->
-    <div v-else-if="projects.length === 0" class="flex items-center justify-center min-h-[400px]">
+    <div v-else-if="filteredProjects.length === 0" class="flex items-center justify-center min-h-[400px]">
       <div class="text-center">
         <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No hay proyectos disponibles</h3>
-        <p class="text-gray-600">Actualmente no hay proyectos para mostrar.</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No hay proyectos en esta categoría</h3>
+        <p class="text-gray-600">No se encontraron proyectos para {{ selectedCategory }}.</p>
       </div>
     </div>
 
     <!-- Projects Grid -->
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <router-link 
-        v-for="project in projects" 
+        v-for="project in filteredProjects" 
         :key="project.id"
         :to="{ name: 'project-detail', params: { id: project.id } }"
         class="relative overflow-hidden border border-gray-200 group cursor-pointer block"
