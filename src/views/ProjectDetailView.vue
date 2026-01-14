@@ -128,27 +128,43 @@ onMounted(async () => {
       }
     }
     
-    // Imágenes de proyectos relacionados
+    // Imágenes de proyectos relacionados: extraer la "imagen principal" buscando
+    // primero en `acf.imagenes` (imagen1..imagen9) y si no existe, en `acf['image-main']`.
     const relatedProjectsData = projectsData
       .filter(p => p.id !== parseInt(props.id))
       .slice(0, 3)
-    
-    const relatedImageIds = relatedProjectsData
-      .map(p => p.acf?.['image-main'])
-      .filter(Boolean)
-    
+
+    // Guardamos el id principal por proyecto (puede ser null)
+    const relatedMainIdsByProject = relatedProjectsData.map(p => {
+      let rMain = null
+      const imgs = p.acf?.imagenes
+      if (imgs) {
+        for (let j = 1; j <= 9; j++) {
+          const id = imgs[`imagen${j}`]
+          if (id) { rMain = id; break }
+        }
+      }
+      if (!rMain) rMain = p.acf?.['image-main'] || null
+      return rMain
+    })
+
+    // IDs de imágenes relacionadas (solo los que existan)
+    const relatedImageIds = relatedMainIdsByProject.filter(Boolean)
     imageIds.push(...relatedImageIds)
-    
+
     // Cargar TODAS las imágenes en paralelo
-    const imageUrls = await Promise.all(
-      imageIds.map(id => fetchImageUrl(id))
-    )
-    
+    const imageUrls = await Promise.all(imageIds.map(id => fetchImageUrl(id)))
+
+    // Crear mapa id -> url para asignar imágenes de forma segura
+    const imageUrlMap = {}
+    imageIds.forEach((id, i) => {
+      imageUrlMap[id] = imageUrls[i]
+    })
+
     // Mapear las URLs a sus respectivos usos
-    let imageIndex = 0
-    const heroImage = mainImageId ? imageUrls[0] : '/images/portfolioHero.png' // La primera imagen es la portada
-    const galleryImages = galleryImageIds.map((_, i) => imageUrls[i]) // Incluir todas las imágenes (incluida la primera)
-    
+    const heroImage = mainImageId ? imageUrlMap[mainImageId] || '/images/portfolioHero.png' : '/images/portfolioHero.png' // La primera imagen es la portada
+    const galleryImages = galleryImageIds.map(id => imageUrlMap[id] || '/images/portfolioHero.png') // Incluir todas las imágenes (incluida la primera)
+
     // Actualizar proyecto con datos básicos primero (renderizado más rápido)
     project.value = {
       category: projectData.acf?.categoria || 'PROYECTO',
@@ -172,11 +188,10 @@ onMounted(async () => {
       galleryImages: galleryImages
     }
     
-    // Mapear proyectos relacionados con sus imágenes
+    // Mapear proyectos relacionados con sus imágenes usando el mapa id->url
     relatedProjects.value = relatedProjectsData.map((p, idx) => {
-      const imgId = p.acf?.['image-main']
-      const relatedImageIndex = galleryImageIds.length + idx // Ajustar el índice para imágenes relacionadas
-      const image = imgId ? imageUrls[relatedImageIndex] : '/images/portfolioHero.png'
+      const rMainId = relatedMainIdsByProject[idx]
+      const image = rMainId ? (imageUrlMap[rMainId] || '/images/portfolioHero.png') : '/images/portfolioHero.png'
       return {
         id: p.id,
         name: p.title.rendered,
@@ -370,7 +385,7 @@ onMounted(async () => {
           v-for="proj in relatedProjects"
           :key="proj.id"
           :to="{ name: 'project-detail', params: { id: proj.id } }"
-          class="relative group overflow-hidden rounded cursor-pointer"
+          class="relative group overflow-hidden cursor-pointer border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
         >
           <img
             :src="proj.image"

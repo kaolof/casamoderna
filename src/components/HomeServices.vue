@@ -20,9 +20,9 @@
 
       <!-- CTA Button -->
       <div class="flex justify-center">
-        <button class="px-8 py-4 border-2 border-black text-black font-bold text-sm tracking-wider hover:bg-black hover:text-white transition-all duration-300">
+        <a href="#contact" class="px-8 py-4 border-2 border-black text-black font-bold text-sm tracking-wider hover:bg-black hover:text-white transition-all duration-300">
           SOLICITA UNA COTIZACIÓN
-        </button>
+        </a>
       </div>
     </div>
   </section>

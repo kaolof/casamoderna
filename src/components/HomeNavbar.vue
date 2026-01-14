@@ -33,13 +33,13 @@
               {{ link.name }}
             </router-link>
 
-            <a
+            <router-link
               v-else
-              :href="link.href"
+              :to="{ path: '/', hash: link.href }"
               class="text-sm font-medium transition-all cursor-pointer pb-1 text-gray-800 hover:text-orange-500 border-b-2 border-transparent hover:border-orange-500"
             >
               {{ link.name }}
-            </a>
+            </router-link>
           </template>
         </div>
       </div>
@@ -60,14 +60,14 @@
               {{ link.name }}
             </router-link>
 
-            <a
+            <router-link
               v-else
-              :href="link.href"
+              :to="{ path: '/', hash: link.href }"
               class="py-2 text-gray-800 font-medium border-b border-gray-100 last:border-b-0 hover:text-orange-500"
               @click="closeMenu"
             >
               {{ link.name }}
-            </a>
+            </router-link>
           </template>
         </div>
       </transition>
