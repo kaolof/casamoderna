@@ -16,7 +16,7 @@
                 <img :src="t.avatar" :alt="t.name" class="w-20 h-20 rounded-full object-cover mr-6 border-4 border-white shadow-md" />
                 <div class="flex-1">
                   <h4 class="text-black font-semibold text-lg">{{ t.name }}</h4>
-                  <p class="text-gray-500 italic mt-2 text-sm">"Muy Bueno"</p>
+                  <p class="text-gray-500 italic mt-2 text-sm">"{{ t.comment }}"</p>
                   <div class="mt-4 flex items-center">
                     <template v-for="j in 5">
                       <svg v-if="j <= t.rating" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" :key="`star-${currentIndex}-${i}-${j}`">
@@ -34,7 +34,7 @@
         </transition>
 
         <!-- Dots Navigation -->
-        <div class="flex justify-center gap-3 mt-8">
+        <div class="flex justify-center gap-3 mt-8" v-if="testimonials.length > 1">
           <button
             v-for="(_, index) in Math.ceil(testimonials.length / 2)"
             :key="`dot-${index}`"
@@ -44,6 +44,11 @@
             :aria-label="`Go to testimonial ${index + 1}`"
           />
         </div>
+        
+        <!-- Loading State -->
+        <div v-if="loading" class="text-center py-8">
+          <p class="text-gray-500">Cargando testimonios...</p>
+        </div>
       </div>
     </div>
   </section>
@@ -52,22 +57,68 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
-const testimonials = [
-  {
-    avatar: '/images/testimonios/metor.jpg',
-    name: 'Metanol de Oriente, Metor S.A',
-    project: '',
-    rating: 4
-  },
-]
+const testimonials = ref([])
+const loading = ref(true)
+const error = ref(null)
+
+// Fetch testimonials from WordPress API
+const fetchTestimonials = async () => {
+  try {
+    loading.value = true
+    const apiBaseUrl = `https://${import.meta.env.VITE_WP_DOMAIN}/wp-json/wp/v2`
+    const response = await fetch(`${apiBaseUrl}/testimonio`)
+    if (!response.ok) throw new Error('Failed to fetch testimonials')
+    
+    const data = await response.json()
+    
+    // Map WordPress API structure to component structure
+    testimonials.value = await Promise.all(data.map(async (item) => {
+      let avatarUrl = '/images/testimonios/default.jpg' // fallback
+      
+      // Fetch avatar image if available
+      if (item.acf?.avatar) {
+        try {
+          const mediaResponse = await fetch(`${apiBaseUrl}/media/${item.acf.avatar}`)
+          if (mediaResponse.ok) {
+            const mediaData = await mediaResponse.json()
+            avatarUrl = mediaData.source_url || avatarUrl
+          }
+        } catch (err) {
+          console.warn('Failed to fetch avatar:', err)
+        }
+      }
+      
+      return {
+        avatar: avatarUrl,
+        name: item.title?.rendered || 'Sin nombre',
+        comment: item.acf?.comentario || 'Muy Bueno',
+        rating: parseInt(item.acf?.calificacion) || 5
+      }
+    }))
+  } catch (err) {
+    console.error('Error fetching testimonials:', err)
+    error.value = err.message
+    // Fallback data
+    testimonials.value = [
+      {
+        avatar: '/images/testimonios/metor.jpg',
+        name: 'Metanol de Oriente, Metor S.A',
+        comment: 'Muy Bueno',
+        rating: 4
+      }
+    ]
+  } finally {
+    loading.value = false
+  }
+}
 
 const currentIndex = ref(0)
 
 const visiblePair = computed(() => {
-  if (testimonials.length === 0) return []
-  const a = testimonials[currentIndex.value % testimonials.length]
-  if (testimonials.length === 1) return [a]
-  const b = testimonials[(currentIndex.value + 1) % testimonials.length]
+  if (testimonials.value.length === 0) return []
+  const a = testimonials.value[currentIndex.value % testimonials.value.length]
+  if (testimonials.value.length === 1) return [a]
+  const b = testimonials.value[(currentIndex.value + 1) % testimonials.value.length]
   // avoid duplicating the same object when length===1
   return [a, b]
 })
@@ -75,9 +126,9 @@ const visiblePair = computed(() => {
 let timer = null
 const startAutoplay = () => {
   stopAutoplay()
-  if (testimonials.length <= 1) return
+  if (testimonials.value.length <= 1) return
   timer = setInterval(() => {
-    currentIndex.value = (currentIndex.value + 2) % testimonials.length
+    currentIndex.value = (currentIndex.value + 2) % testimonials.value.length
   }, 5000)
 }
 
@@ -89,11 +140,14 @@ const stopAutoplay = () => {
 }
 
 const goToPair = (index) => {
-  currentIndex.value = (index * 2) % testimonials.length
+  currentIndex.value = (index * 2) % testimonials.value.length
   startAutoplay()
 }
 
-onMounted(() => startAutoplay())
+onMounted(async () => {
+  await fetchTestimonials()
+  startAutoplay()
+})
 onBeforeUnmount(() => stopAutoplay())
 </script>
 
