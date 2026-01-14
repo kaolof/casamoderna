@@ -39,7 +39,7 @@
 
           <!-- Content -->
           <div class="absolute inset-0 flex flex-col justify-end p-8 z-10">
-            <p class="text-white text-sm font-semibold tracking-widest mb-2">PROYECTO</p>
+            <p class="text-white text-sm font-semibold tracking-widest mb-2 uppercase">{{ project.category }}</p>
             <h3 class="text-white text-2xl font-bold">{{ project.title }}</h3>
           </div>
         </router-link>
@@ -89,25 +89,55 @@ const fetchImageUrl = async (imageId) => {
 // Cargar proyectos destacados desde la API
 onMounted(async () => {
   try {
-    // Obtener los primeros 3 proyectos
-    const response = await fetch(`${API_BASE_URL}/proyecto?per_page=3`)
+    // Obtener los primeros 3 proyectos (con _embed para obtener términos/taxonomías)
+    const response = await fetch(`${API_BASE_URL}/proyecto?per_page=3&_embed`)
     const projectsData = await response.json()
-    
+
     // Cargar todas las imágenes en paralelo (usar imagen1 como portada)
     const imageIds = projectsData
       .map(p => p.acf?.imagenes?.imagen1)
       .filter(Boolean)
-    
+
     const imageUrls = await Promise.all(
       imageIds.map(id => fetchImageUrl(id))
     )
-    
-    // Mapear proyectos con sus imágenes
-    projects.value = projectsData.map((project, idx) => ({
-      id: project.id,
-      title: project.title.rendered,
-      image: imageUrls[idx] || DEFAULT_IMAGE
-    }))
+
+    // Helper para extraer la categoría desde _embedded (robusto)
+    const getCategoryFromEmbedded = (project) => {
+      try {
+        const termsGroup = project._embedded && project._embedded['wp:term']
+        if (Array.isArray(termsGroup)) {
+          for (const group of termsGroup) {
+            if (Array.isArray(group) && group.length > 0) {
+              const term = group.find(t => t && t.name)
+              if (term) return term.name
+            }
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+      return null
+    }
+
+    // Mostrar en consola para depuración
+    console.log('Raw proyectos response (for debugging _embedded):', projectsData)
+
+    // Mapear proyectos con sus imágenes y categoría (fallbacks adicionales)
+    projects.value = projectsData.map((project, idx) => {
+      const embeddedCategory = getCategoryFromEmbedded(project)
+      const acfCategory = project.acf?.categoria || project.acf?.categoria_nombre || null
+      const category = embeddedCategory || acfCategory || 'PROYECTO'
+      console.log(`Project ${project.id} -> embeddedCategory:`, embeddedCategory, 'acfCategory:', acfCategory)
+      return {
+        id: project.id,
+        title: project.title.rendered,
+        image: imageUrls[idx] || DEFAULT_IMAGE,
+        category
+      }
+    })
+
+    console.log('Proyectos mapeados:', projects.value)
     
     console.log('Proyectos cargados:', projects.value)
     

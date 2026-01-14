@@ -12,21 +12,21 @@
             <h2 class="text-4xl font-bold mb-4">¿Listo para dar el siguiente paso?</h2>
             <p class="text-gray-200 mb-8">Ya sea que estés planeando tu nuevo hogar, un espacio comercial o un proyecto de gran escala, estamos aquí para ayudarte a materializarlo.</p>
             
-            <div class="space-y-3 flex flex-col items-center md:items-start">
-              <div class="flex items-center gap-3 justify-center md:justify-start">
+            <div class="space-y-3 flex flex-col items-start">
+              <div class="flex items-center gap-3 justify-start">
                 <Phone class="h-5 w-5 text-orange-500" />
                 <a class="font-semibold">0281 2635061</a>
               </div>
-              <div class="flex items-center gap-3 justify-center md:justify-start">
+              <div class="flex items-center gap-3 justify-start">
                 <Smartphone class="h-5 w-5 text-orange-500" />
                 <a href="https://wa.me/+5804148200766" class="font-semibold hover:text-orange-500 transition-colors">0414 8200766</a>
               </div>
 
-              <div class="flex items-center gap-3 justify-center md:justify-start">
+              <div class="flex items-center gap-3 justify-start">
                 <Mail class="h-5 w-5 text-orange-500" />
                 <a href="mailto:info@construcasaomodern.com" class="text-white">Info@construcasaomodern.com</a>
               </div>
-              <div class="flex items-center gap-3 justify-center md:justify-start">
+              <div class="flex items-center gap-3 justify-start">
                 <MapPin class="h-5 w-5 text-orange-500" />
                 <span class="text-white">Av. Prolongación Paseo Colón, Conjunto residencial El Paraíso Local N°02 Puerto la Cruz Estado Anzoátegui
               </span>
@@ -111,7 +111,7 @@
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Smartphone class="h-5 w-5 text-orange-500" />
-            <span>0414 8200766</span> 
+            <a href="https://wa.me/+5804148200766" class="hover:text-orange-500 transition-colors">0414 8200766</a> 
           </div> 
         </div>
       </div>
@@ -121,7 +121,7 @@
     <div class="bg-black text-white py-6 px-8">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-sm text-gray-400 text-center md:text-left">© CONSTRUSERVICIOS CASAMODERNA. Todos los derechos reservados.</p>
-        <p class="text-sm text-gray-400 text-center md:text-right">Desarrollado por Tkwebspace</p>
+        <p class="text-sm text-gray-400 text-center md:text-right">Desarrollado por TKwebspace</p>
       </div>
     </div>
   </div>

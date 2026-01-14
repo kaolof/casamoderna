@@ -131,32 +131,52 @@ onMounted(async () => {
     </div>
 
     <!-- Projects Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <router-link 
-        v-for="project in filteredProjects" 
-        :key="project.id"
-        :to="{ name: 'project-detail', params: { id: project.id } }"
-        class="relative overflow-hidden border border-gray-200 group cursor-pointer block"
-      >
-        <img :src="project.image" :alt="project.title" class="w-full h-48 md:h-56 lg:h-64 object-cover block" />
+    <div v-else>
+      <!-- Mobile: mostrar tarjetas tipo HomeFeaturedProjects (solo en pantalla pequeña) -->
+      <div class="block sm:hidden grid grid-cols-1 gap-4 mb-4">
+        <router-link
+          v-for="project in filteredProjects"
+          :key="project.id + '-mobile'"
+          :to="{ name: 'project-detail', params: { id: project.id } }"
+          class="relative h-64 overflow-hidden group cursor-pointer bg-gray-800"
+        >
+          <img :src="project.image" :alt="project.title" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end p-6 z-10">
+            <p class="text-white text-sm font-semibold tracking-widest mb-2 uppercase">{{ project.category }}</p>
+            <h3 class="text-white text-xl font-bold">{{ project.title }}</h3>
+          </div>
+        </router-link>
+      </div>
 
-        <!-- Overlay on hover: reveal with left->right wipe -->
-        <div class="absolute inset-0 flex items-center justify-start">
-          <!-- White panel with orange stripe that expands from left to right -->
-          <div class="relative ml-4 h-auto w-0 group-hover:w-80 transition-all duration-300 ease-out overflow-hidden">
-            <!-- White background container with shadow -->
-            <div class="bg-white shadow-lg flex items-stretch h-full min-h-[120px]">
-              <!-- Orange stripe on the left, full height -->
-              <div class="w-3 bg-orange-500 flex-shrink-0 self-stretch"></div>
-              <!-- Text content that appears after animation -->
-              <div class="pl-6 pr-8 py-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300">
-                <p class="text-xs uppercase text-gray-500 tracking-wider mb-1">{{ project.category }} · {{ project.year }}</p>
-                <h3 class="text-base font-bold whitespace-nowrap">{{ project.title }}</h3>
+      <!-- Desktop/Tablet: conservar grid y animación existente (oculto en móvil) -->
+      <div class="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <router-link 
+          v-for="project in filteredProjects" 
+          :key="project.id"
+          :to="{ name: 'project-detail', params: { id: project.id } }"
+          class="relative overflow-hidden border border-gray-200 group cursor-pointer block"
+        >
+          <img :src="project.image" :alt="project.title" class="w-full h-48 md:h-56 lg:h-64 object-cover block" />
+
+          <!-- Overlay on hover: reveal with left->right wipe -->
+          <div class="absolute inset-0 flex items-center justify-start">
+            <!-- White panel with orange stripe that expands from left to right -->
+            <div class="relative ml-4 h-auto w-0 group-hover:w-80 transition-all duration-300 ease-out overflow-hidden">
+              <!-- White background container with shadow -->
+              <div class="bg-white shadow-lg flex items-stretch h-full min-h-[120px]">
+                <!-- Orange stripe on the left, full height -->
+                <div class="w-3 bg-orange-500 flex-shrink-0 self-stretch"></div>
+                <!-- Text content that appears after animation -->
+                <div class="pl-6 pr-8 py-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 delay-300">
+                  <p class="text-xs uppercase text-gray-500 tracking-wider mb-1">{{ project.category }} · {{ project.year }}</p>
+                  <h3 class="text-base font-bold whitespace-nowrap">{{ project.title }}</h3>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </router-link>
+        </router-link>
+      </div>
     </div>
   </section>
 </template>

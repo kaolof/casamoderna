@@ -6,7 +6,7 @@
         <!-- Imagen superior izquierda -->
         <div class="col-span-1 row-span-1 overflow-hidden shadow-lg">
           <img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=600&fit=crop"
+            src="/images/home/about/about1.png"
             alt="Profesional de arquitectura"
             class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
@@ -15,7 +15,7 @@
         <!-- Imagen vertical derecha (ocupa dos filas) -->
         <div class="col-span-1 row-span-2 overflow-hidden shadow-lg relative">
           <img
-            src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&h=1200&fit=crop"
+            src="/images/home/about/about2.jpg"
             alt="Diseño interior con plantas"
             class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
@@ -27,7 +27,7 @@
         <!-- Imagen inferior izquierda. -->
         <div class="col-span-1 row-span-1 overflow-hidden shadow-lg">
           <img
-            src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&h=600&fit=crop"
+            src="/images/home/about/about3.jpg"
             alt="Proyecto arquitectónico moderno"
             class="w-full h-full object-cover transition-all duration-300 ease-in-out transform hover:scale-105"
           />
