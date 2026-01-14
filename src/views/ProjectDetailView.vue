@@ -234,24 +234,24 @@ onMounted(async () => {
     </section>
 
    <!-- About Project Section (three columns: title, description, technical card) -->
-  <section class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[100px_1fr_300px] gap-8 items-start">
+  <section class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[100px_1fr_300px] gap-4 md:gap-8 items-start">
     <!-- Column 1: Title with vertical orange bar -->
-    <div class="flex items-start py-10">
-      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+    <div class="order-2 md:order-1 flex items-start py-4 md:py-10">
+      <div class="w-3 md:w-4 h-8 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
       <div>
         <h2 class="text-sm font-bold">Acerca del proyecto</h2>
       </div>
     </div>
 
     <!-- Column 2: Long description -->
-    <div class="py-10">
+    <div class="order-3 md:order-2 py-4 md:py-10">
       <p class="text-gray-600 leading-relaxed mb-6">
         {{ project.description }}
       </p>
     </div>
 
     <!-- Column 3: Technical card (spans 4 rows) -->
-    <aside class="p-8 h-fit border border-gray-200 md:row-span-4" style="background-color: rgba(209,222,222,0.3);">
+    <aside class="order-1 md:order-3 p-4 md:p-8 h-fit border border-gray-200 md:row-span-4" style="background-color: rgba(209,222,222,0.3);">
       <div class="space-y-4">
         <div>
           <p class="text-xs text-gray-500 mb-1">Proyecto</p>
@@ -277,14 +277,14 @@ onMounted(async () => {
     </aside>
 
     <!-- Datos Técnicos Section - Row 2 -->
-    <div class="flex items-start pb-10">
-      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+    <div class="order-4 md:order-4 flex items-start pb-4 md:pb-10">
+      <div class="w-3 md:w-4 h-8 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
       <div>
         <h4 class="text-sm font-bold">Datos Técnicos</h4>
       </div>
     </div>
 
-    <div class="pb-10">
+    <div class="order-5 md:order-5 pb-4 md:pb-10">
       <div class="text-gray-600 leading-relaxed space-y-2">
         <p><strong>Área:</strong> {{ project.technicalData.area }}</p>
         <p><strong>Sistema constructivo:</strong> {{ project.technicalData.constructionSystem }}</p>
@@ -294,14 +294,14 @@ onMounted(async () => {
     </div>
 
     <!-- Servicios Desarrollados Section - Row 3 -->
-    <div class="flex items-start pb-10">
-      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+    <div class="order-6 md:order-6 flex items-start pb-4 md:pb-10">
+      <div class="w-3 md:w-4 h-8 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
       <div>
         <h4 class="text-sm font-bold">Servicios Desarrollados</h4>
       </div>
     </div>
 
-    <div class="pb-10">
+    <div class="order-7 md:order-7 pb-4 md:pb-10">
       <p class="text-gray-600 leading-relaxed">
         <span class="text-gray-600">
           {{ Array.isArray(project.developedServices) ? project.developedServices.join(' · ') : project.developedServices }}
@@ -310,14 +310,14 @@ onMounted(async () => {
     </div>
 
     <!-- Estado del Proyecto Section - Row 4 -->
-    <div class="flex items-start pb-10">
-      <div class="w-3 md:w-4 h-16 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
+    <div class="order-8 md:order-8 flex items-start pb-4 md:pb-10">
+      <div class="w-3 md:w-4 h-8 md:h-20 bg-orange-500 mr-2 flex-shrink-0"></div>
       <div>
         <h4 class="text-sm font-bold">Estado del Proyecto</h4>
       </div>
     </div>
 
-    <div class="pb-10">
+    <div class="order-9 md:order-9 pb-4 md:pb-10">
       <p class="text-gray-600 font-bold">
         {{ project.projectStatus }}
       </p>
