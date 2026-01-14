@@ -1,73 +1,46 @@
 <template>
-  <section id="testimonials" class="w-full bg-gray-100 py-18">
+  <section id="testimonials" class="w-full bg-gray-100 py-20">
     <div class="max-w-6xl mx-auto px-6">
       <!-- Header -->
       <div class="text-center mb-12 px-4 sm:px-0">
-        <p class="text-gray-500 text-sm tracking-widest mb-4">LO QUE DICEN NUESTROS CLIENTES</p>
-        <h2 class="text-2xl md:text-5xl font-bold text-black">La mejor garantía de nuestro trabajo</h2>
+        <p class="text-gray-500 text-sm tracking-widest mb-4 uppercase">EVALUACIÓN DE DESEMPEÑO</p>
+        <h2 class="text-3xl md:text-5xl font-extrabold text-black leading-tight">Calificación certificada por el<br class="hidden md:inline">Registro Nacional de Contratistas</h2>
       </div>
 
-      <!-- Testimonials Carousel -->
-      <div class="relative min-h-[400px]">
-        <transition
-          name="fade"
-          mode="out-in"
-        >
-          <div
-            :key="`testimonial-${currentTestimonial}`"
-            class="w-full"
-          >
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <!-- Testimonial 1 -->
-              <div class="bg-white p-8">
-                <div class="flex items-center mb-6">
-                  <img
-                    :src="testimonials[currentTestimonial].avatar"
-                    :alt="testimonials[currentTestimonial].name"
-                    class="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h4 class="font-bold text-black">{{ testimonials[currentTestimonial].name }}</h4>
-                    <p class="text-orange-500 text-sm font-semibold">{{ testimonials[currentTestimonial].project }}</p>
+      <!-- Testimonials Slider (two cards visible) -->
+      <div class="relative">
+        <transition name="fade" mode="out-in">
+          <div :key="`pair-${currentIndex}`" :class="['grid gap-8 items-start', visiblePair.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-1']">
+            <div v-for="(t, i) in visiblePair" :key="`card-${currentIndex}-${i}`" :class="['bg-white p-8 shadow-sm', visiblePair.length === 1 ? 'mx-auto md:w-1/2' : '']">
+              <div class="flex items-start">
+                <img :src="t.avatar" :alt="t.name" class="w-20 h-20 rounded-full object-cover mr-6 border-4 border-white shadow-md" />
+                <div class="flex-1">
+                  <h4 class="text-black font-semibold text-lg">{{ t.name }}</h4>
+                  <p class="text-gray-500 italic mt-2 text-sm">"Muy Bueno"</p>
+                  <div class="mt-4 flex items-center">
+                    <template v-for="j in 5">
+                      <svg v-if="j <= t.rating" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" :key="`star-${currentIndex}-${i}-${j}`">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.383 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118l-3.383-2.455a1 1 0 00-1.176 0l-3.383 2.455c-.784.57-1.84-.197-1.54-1.118l1.286-3.97a1 1 0 00-.364-1.118L2.045 9.397c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.97z" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" viewBox="0 0 20 20" fill="currentColor" :key="`star-empty-${currentIndex}-${i}-${j}`">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.383 2.455a1 1 0 00-.364 1.118l1.286 3.97c.3.921-.755 1.688-1.54 1.118l-3.383-2.455a1 1 0 00-1.176 0l-3.383 2.455c-.784.57-1.84-.197-1.54-1.118l1.286-3.97a1 1 0 00-.364-1.118L2.045 9.397c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.97z" />
+                      </svg>
+                    </template>
                   </div>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[currentTestimonial].text }}</p>
-              </div>
-
-              <!-- Testimonial 2 (if exists) -->
-              <div
-                v-if="currentTestimonial + 1 < testimonials.length"
-                class="bg-white p-8"
-              >
-                <div class="flex items-center mb-6">
-                  <img
-                    :src="testimonials[currentTestimonial + 1].avatar"
-                    :alt="testimonials[currentTestimonial + 1].name"
-                    class="w-16 h-16 rounded-full object-cover mr-4"
-                  />
-                  <div>
-                    <h4 class="font-bold text-black">{{ testimonials[currentTestimonial + 1].name }}</h4>
-                    <p class="text-orange-500 text-sm font-semibold">{{ testimonials[currentTestimonial + 1].project }}</p>
-                  </div>
-                </div>
-                <p class="text-gray-600 text-sm leading-relaxed">{{ testimonials[currentTestimonial + 1].text }}</p>
               </div>
             </div>
           </div>
         </transition>
 
         <!-- Dots Navigation -->
-        <div class="flex justify-center gap-3 mt-12">
+        <div class="flex justify-center gap-3 mt-8">
           <button
             v-for="(_, index) in Math.ceil(testimonials.length / 2)"
             :key="`dot-${index}`"
-            @click="currentTestimonial = index * 2"
+            @click="goToPair(index)"
             class="transition-all duration-300"
-            :class="
-              index * 2 === currentTestimonial
-                ? 'w-8 h-3 bg-orange-500 rounded-full'
-                : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'
-            "
+            :class="index * 2 === currentIndex ? 'w-10 h-3 bg-orange-500 rounded-full' : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'"
             :aria-label="`Go to testimonial ${index + 1}`"
           />
         </div>
@@ -77,49 +50,65 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const currentTestimonial = ref(0)
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
 const testimonials = [
   {
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop',
-    name: 'Nombre del cliente',
-    project: 'NOMBRE DEL PROYECTO',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
+    avatar: '/images/testimonios/metor.jpg',
+    name: 'Metanol de Oriente, Metor S.A',
+    project: '',
+    rating: 4
   },
-  {
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop',
-    name: 'Nombre del cliente',
-    project: 'NOMBRE DEL PROYECTO',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
-  },
-  {
-    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop',
-    name: 'Nombre del cliente',
-    project: 'NOMBRE DEL PROYECTO',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
-  },
-  {
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop',
-    name: 'Nombre del cliente',
-    project: 'NOMBRE DEL PROYECTO',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu turpis molestie, dictum est a, mattis tellus. Sed dignissim, metus nec fringilla accumsan, risus sem sollicitudin lacus, ut interdum elit sed risus. Maecenas eget condimentum velit, sit amet feugiat lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Praesent auctor purus luctus enim eros ac scelerisque ante pulvinar.'
-  }
 ]
+
+const currentIndex = ref(0)
+
+const visiblePair = computed(() => {
+  if (testimonials.length === 0) return []
+  const a = testimonials[currentIndex.value % testimonials.length]
+  if (testimonials.length === 1) return [a]
+  const b = testimonials[(currentIndex.value + 1) % testimonials.length]
+  // avoid duplicating the same object when length===1
+  return [a, b]
+})
+
+let timer = null
+const startAutoplay = () => {
+  stopAutoplay()
+  if (testimonials.length <= 1) return
+  timer = setInterval(() => {
+    currentIndex.value = (currentIndex.value + 2) % testimonials.length
+  }, 5000)
+}
+
+const stopAutoplay = () => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+}
+
+const goToPair = (index) => {
+  currentIndex.value = (index * 2) % testimonials.length
+  startAutoplay()
+}
+
+onMounted(() => startAutoplay())
+onBeforeUnmount(() => stopAutoplay())
 </script>
 
 <style scoped>
+.star-filled { color: #FBBF24; }
+.star-empty { color: #E5E7EB; }
+
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.7s ease;
+  transition: opacity 0.6s ease;
 }
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
-
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;

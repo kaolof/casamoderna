@@ -15,15 +15,21 @@
             <div class="space-y-3 flex flex-col items-center md:items-start">
               <div class="flex items-center gap-3 justify-center md:justify-start">
                 <Phone class="h-5 w-5 text-orange-500" />
-                <a href="tel:+58000000000" class="text-orange-500 font-semibold">+58 000 000 0000</a>
+                <a class="font-semibold">0281 2635061</a>
               </div>
+              <div class="flex items-center gap-3 justify-center md:justify-start">
+                <Smartphone class="h-5 w-5 text-orange-500" />
+                <a href="https://wa.me/+5804148200766" class="font-semibold hover:text-orange-500 transition-colors">0414 8200766</a>
+              </div>
+
               <div class="flex items-center gap-3 justify-center md:justify-start">
                 <Mail class="h-5 w-5 text-orange-500" />
                 <a href="mailto:info@construcasaomodern.com" class="text-white">Info@construcasaomodern.com</a>
               </div>
               <div class="flex items-center gap-3 justify-center md:justify-start">
                 <MapPin class="h-5 w-5 text-orange-500" />
-                <span class="text-white">Dirección</span>
+                <span class="text-white">Av. Prolongación Paseo Colón, Conjunto residencial El Paraíso Local N°02 Puerto la Cruz Estado Anzoátegui
+              </span>
               </div>
             </div>
           </div>
@@ -96,17 +102,17 @@
         <!-- Contact Info -->
         <div class="w-full md:w-1/2 text-center md:text-right space-y-2">
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
-            <Phone class="h-5 w-5 text-orange-500" />
-            <span>+58 000 000 0000</span>
-          </div>
-          <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Mail class="h-5 w-5 text-orange-500" />
             <span>info@construcasaomodern.com</span>
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
-            <MapPin class="h-5 w-5 text-orange-500" />
-            <span>Dirección</span>
+            <Phone class="h-5 w-5 text-orange-500" />
+            <span>0281 2635061</span>
           </div>
+          <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
+            <Smartphone class="h-5 w-5 text-orange-500" />
+            <span>0414 8200766</span> 
+          </div> 
         </div>
       </div>
     </div>
@@ -123,7 +129,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Phone, Mail, MapPin } from 'lucide-vue-next'
+import { Phone, Mail, MapPin, Smartphone } from 'lucide-vue-next'
 
 // Estado del formulario
 const form = ref({
