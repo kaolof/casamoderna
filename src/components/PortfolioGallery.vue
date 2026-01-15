@@ -90,8 +90,22 @@ onMounted(async () => {
 <template>
   <section class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-sm font-semibold tracking-wide">TODOS LOS PROYECTOS</h2>
-      <nav class="space-x-4 text-sm">
+      <h2 class="text-sm font-semibold tracking-wide"></h2>
+
+      <!-- Mobile: dropdown -->
+      <div class="block sm:hidden">
+        <label for="category-select" class="sr-only">Categoría</label>
+        <select
+          id="category-select"
+          v-model="selectedCategory"
+          class="w-full border px-3 py-2 text-sm"
+        >
+          <option v-for="(c, i) in categories" :key="i" :value="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <!-- Desktop: buttons -->
+      <nav class="hidden sm:flex space-x-4 text-sm">
         <button 
           v-for="(c, i) in categories" 
           :key="i" 
@@ -126,7 +140,6 @@ onMounted(async () => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
         <h3 class="text-lg font-medium text-gray-900 mb-2">No hay proyectos en esta categoría</h3>
-        <p class="text-gray-600">No se encontraron proyectos para {{ selectedCategory }}.</p>
       </div>
     </div>
 

@@ -3,8 +3,21 @@
     <div class="max-w-6xl mx-auto px-6">
       <!-- Header -->
       <div class="text-center mb-12 px-4 sm:px-0">
-        <p class="text-gray-500 text-sm tracking-widest mb-4 uppercase">EVALUACIÓN DE DESEMPEÑO</p>
-        <h2 class="text-3xl md:text-5xl font-extrabold text-black leading-tight">Calificación certificada por el<br class="hidden md:inline">Registro Nacional de Contratistas</h2>
+        <p class="text-gray-500 text-sm tracking-widest mb-4 uppercase">LO QUE DICEN NUESTROS CLIENTES</p>
+        <h2 class="text-3xl md:text-5xl font-extrabold text-black leading-tight">
+          La mejor garantía de <br class="hidden md:inline">nuestro trabajo</h2>
+      </div>
+
+      <!-- Category filters -->
+      <div class="flex justify-center gap-4 mb-8">
+        <button
+          v-for="(cat, idx) in categories"
+          :key="`cat-${idx}`"
+          @click="selectCategory(cat)"
+          :class="[cat === selectedCategory ? 'bg-orange-500 text-white' : 'bg-white text-gray-700 border', 'px-4 py-2 font-semibold transition']"
+        >
+          {{ cat }}
+        </button>
       </div>
 
       <!-- Testimonials Slider (two cards visible) -->
@@ -33,14 +46,16 @@
           </div>
         </transition>
 
+        <!-- Arrows removed: navigation uses bottom dots -->
+
         <!-- Dots Navigation -->
-        <div class="flex justify-center gap-3 mt-8" v-if="testimonials.length > 1">
+        <div class="flex justify-center gap-3 mt-8" v-if="filteredTestimonials.length > 1">
           <button
-            v-for="(_, index) in Math.ceil(testimonials.length / 2)"
+            v-for="(_, index) in Math.ceil(filteredTestimonials.length / 2)"
             :key="`dot-${index}`"
             @click="goToPair(index)"
             class="transition-all duration-300"
-            :class="index * 2 === currentIndex ? 'w-10 h-3 bg-orange-500 rounded-full' : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'"
+            :class="index === Math.floor(currentIndex / 2) ? 'w-10 h-3 bg-orange-500 rounded-full' : 'w-3 h-3 bg-gray-300 rounded-full hover:bg-gray-400'"
             :aria-label="`Go to testimonial ${index + 1}`"
           />
         </div>
@@ -60,6 +75,31 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 const testimonials = ref([])
 const loading = ref(true)
 const error = ref(null)
+// Only two categories as requested
+const CATEGORY_TESTIMONIOS = 'TESTIMONIOS'
+const CATEGORY_RNC = 'CALIFICACIÓN (RNC)'
+const categories = [CATEGORY_TESTIMONIOS, CATEGORY_RNC]
+const selectedCategory = ref(CATEGORY_TESTIMONIOS)
+
+const getCategoryOf = (item) => {
+  const acfCat = (item.acf?.categoria || '').toString().toLowerCase()
+  // If ACF explicitly sets category, prefer that value
+  if (acfCat) {
+    if (acfCat.includes('rnc') || acfCat.includes('calif')) return CATEGORY_RNC
+    if (acfCat.includes('test')) return CATEGORY_TESTIMONIOS
+  }
+
+  // Fallback heuristics: check tipo or presence of calificacion
+  const tipo = (item.acf?.tipo || '').toString().toLowerCase()
+  if (tipo.includes('rnc') || tipo.includes('calif') || item.acf?.calificacion) return CATEGORY_RNC
+  return CATEGORY_TESTIMONIOS
+}
+
+// Testimonials filtered by selected category (using heuristics)
+const filteredTestimonials = computed(() => {
+  if (!testimonials.value || testimonials.value.length === 0) return []
+  return testimonials.value.filter(item => getCategoryOf(item) === selectedCategory.value)
+})
 
 // Fetch testimonials from WordPress API
 const fetchTestimonials = async () => {
@@ -71,7 +111,7 @@ const fetchTestimonials = async () => {
     
     const data = await response.json()
     
-    // Map WordPress API structure to component structure
+    // Map WordPress API structure to component structure (keep ACF for categorization)
     testimonials.value = await Promise.all(data.map(async (item) => {
       let avatarUrl = '/images/testimonios/default.jpg' // fallback
       
@@ -92,7 +132,9 @@ const fetchTestimonials = async () => {
         avatar: avatarUrl,
         name: item.title?.rendered || 'Sin nombre',
         comment: item.acf?.comentario || 'Muy Bueno',
-        rating: parseInt(item.acf?.calificacion) || 5
+        rating: parseInt(item.acf?.calificacion) || 5,
+        acf: item.acf || {},
+        _raw: item
       }
     }))
   } catch (err) {
@@ -115,20 +157,21 @@ const fetchTestimonials = async () => {
 const currentIndex = ref(0)
 
 const visiblePair = computed(() => {
-  if (testimonials.value.length === 0) return []
-  const a = testimonials.value[currentIndex.value % testimonials.value.length]
-  if (testimonials.value.length === 1) return [a]
-  const b = testimonials.value[(currentIndex.value + 1) % testimonials.value.length]
-  // avoid duplicating the same object when length===1
+  const list = filteredTestimonials.value
+  if (list.length === 0) return []
+  const a = list[currentIndex.value % list.length]
+  if (list.length === 1) return [a]
+  const b = list[(currentIndex.value + 1) % list.length]
   return [a, b]
 })
 
 let timer = null
 const startAutoplay = () => {
   stopAutoplay()
-  if (testimonials.value.length <= 1) return
+  const len = filteredTestimonials.value.length
+  if (len <= 1) return
   timer = setInterval(() => {
-    currentIndex.value = (currentIndex.value + 2) % testimonials.value.length
+    currentIndex.value = (currentIndex.value + 1) % len
   }, 5000)
 }
 
@@ -139,8 +182,19 @@ const stopAutoplay = () => {
   }
 }
 
+
 const goToPair = (index) => {
-  currentIndex.value = (index * 2) % testimonials.value.length
+  const len = filteredTestimonials.value.length
+  if (len === 0) return
+  currentIndex.value = (index * 2) % len
+  startAutoplay()
+}
+
+// `next`/`prev` removed — navigation handled via dots and autoplay
+
+const selectCategory = (cat) => {
+  selectedCategory.value = cat
+  currentIndex.value = 0
   startAutoplay()
 }
 

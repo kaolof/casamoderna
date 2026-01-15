@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import HomeNavbar from '../components/HomeNavbar.vue'
 import HomeContactFooter from '../components/HomeContactFooter.vue'
 import ImageGallery from '../components/ImageGallery.vue'
@@ -38,53 +38,6 @@ const project = ref({
 const isLoading = ref(true)
 const relatedProjects = ref([])
 
-// Datos de prueba
-const mockProject = {
-  category: 'PROYECTO',
-  name: 'Casa Moderna Residencial',
-  heroImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
-  client: 'Familia López',
-  year: '2024',
-  location: 'Ciudad de México',
-  area: '350 M2',
-  services: 'Construcción completa, diseño arquitectónico, diseño de interiores',
-  description: 'Este proyecto representa la perfecta fusión entre diseño contemporáneo y funcionalidad. La Casa Moderna Residencial fue diseñada para una familia joven que buscaba un espacio luminoso, amplio y conectado con el exterior.',
-  descriptionContinued: 'Se utilizaron materiales de primera calidad incluyendo concreto aparente, madera de nogal y grandes ventanales de piso a techo. El diseño incorpora conceptos de eficiencia energética y sustentabilidad, con paneles solares y sistemas de captación de agua pluvial.',
-  technicalData: {
-    area: '350 m²',
-    constructionSystem: 'Estructura de concreto armado con muros de block',
-    levels: '2 niveles',
-    mainInstallations: 'Eléctrica (220V trifásica), sanitaria (agua potable y drenaje), mecánica (climatización central con tecnología inverter), instalación solar (paneles fotovoltaicos 5kW)'
-  },
-  developedServices: ['Arquitectura', 'Ingeniería', 'Ejecución de obra', 'Supervisión', 'Gestión integral'],
-  projectStatus: 'Ejecutado',
-  galleryImages: [
-    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
-    'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-    'https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80',
-    'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&q=80'
-  ]
-}
-
-const mockRelatedProjects = [
-  {
-    id: 2,
-    name: 'Villa Contemporánea',
-    image: 'https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80'
-  },
-  {
-    id: 3,
-    name: 'Residencia Minimalista',
-    image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80'
-  },
-  {
-    id: 4,
-    name: 'Casa Jardín',
-    image: 'https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80'
-  }
-]
-
 // Helper function para cargar imágenes en paralelo
 const fetchImageUrl = async (imageId, defaultUrl = '/images/portfolioHero.png') => {
   if (!imageId) return defaultUrl
@@ -99,42 +52,34 @@ const fetchImageUrl = async (imageId, defaultUrl = '/images/portfolioHero.png') 
 }
 
 // Cargar proyecto desde la API
-onMounted(async () => {
+// Función reutilizable para cargar proyecto y relacionados por id
+const loadProject = async (projectId) => {
   try {
-    // Obtener datos del proyecto y proyectos relacionados en paralelo
     const [projectData, projectsData] = await Promise.all([
-      fetch(`${API_BASE_URL}/proyecto/${props.id}`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/proyecto/${projectId}`).then(r => r.json()),
       fetch(`${API_BASE_URL}/proyecto`).then(r => r.json())
     ])
-    
-    // Recolectar todos los IDs de imágenes que necesitamos cargar
+
     const imageIds = []
-    
-    // Imagen principal (usar la primera imagen disponible del objeto imagenes)
     const imagenesObj = projectData.acf?.imagenes
     const galleryImageIds = []
     let mainImageId = null
-    
+
     if (imagenesObj) {
-      // Recolectar todas las imágenes del objeto imagenes (imagen1 a imagen9)
       for (let i = 1; i <= 9; i++) {
         const imgId = imagenesObj[`imagen${i}`]
         if (imgId) {
           galleryImageIds.push(imgId)
           imageIds.push(imgId)
-          // La primera imagen será la imagen principal del hero
           if (!mainImageId) mainImageId = imgId
         }
       }
     }
-    
-    // Imágenes de proyectos relacionados: extraer la "imagen principal" buscando
-    // primero en `acf.imagenes` (imagen1..imagen9) y si no existe, en `acf['image-main']`.
+
     const relatedProjectsData = projectsData
-      .filter(p => p.id !== parseInt(props.id))
+      .filter(p => p.id !== parseInt(projectId))
       .slice(0, 3)
 
-    // Guardamos el id principal por proyecto (puede ser null)
     const relatedMainIdsByProject = relatedProjectsData.map(p => {
       let rMain = null
       const imgs = p.acf?.imagenes
@@ -148,24 +93,19 @@ onMounted(async () => {
       return rMain
     })
 
-    // IDs de imágenes relacionadas (solo los que existan)
     const relatedImageIds = relatedMainIdsByProject.filter(Boolean)
     imageIds.push(...relatedImageIds)
 
-    // Cargar TODAS las imágenes en paralelo
     const imageUrls = await Promise.all(imageIds.map(id => fetchImageUrl(id)))
 
-    // Crear mapa id -> url para asignar imágenes de forma segura
     const imageUrlMap = {}
     imageIds.forEach((id, i) => {
       imageUrlMap[id] = imageUrls[i]
     })
 
-    // Mapear las URLs a sus respectivos usos
-    const heroImage = mainImageId ? imageUrlMap[mainImageId] || '/images/portfolioHero.png' : '/images/portfolioHero.png' // La primera imagen es la portada
-    const galleryImages = galleryImageIds.map(id => imageUrlMap[id] || '/images/portfolioHero.png') // Incluir todas las imágenes (incluida la primera)
+    const heroImage = mainImageId ? imageUrlMap[mainImageId] || '/images/portfolioHero.png' : '/images/portfolioHero.png'
+    const galleryImages = galleryImageIds.map(id => imageUrlMap[id] || '/images/portfolioHero.png')
 
-    // Actualizar proyecto con datos básicos primero (renderizado más rápido)
     project.value = {
       category: projectData.acf?.categoria || 'PROYECTO',
       name: projectData.title.rendered,
@@ -181,14 +121,11 @@ onMounted(async () => {
         levels: projectData.acf?.datos_tecnicos?.niveles || '-',
         mainInstallations: projectData.acf?.datos_tecnicos?.principales_instalaciones || '-'
       },
-      developedServices: Array.isArray(projectData.acf?.servicios_desarrollados) 
-        ? projectData.acf.servicios_desarrollados 
-        : [],
+      developedServices: Array.isArray(projectData.acf?.servicios_desarrollados) ? projectData.acf.servicios_desarrollados : [],
       projectStatus: projectData.acf?.estado_del_proyecto || '-',
       galleryImages: galleryImages
     }
-    
-    // Mapear proyectos relacionados con sus imágenes usando el mapa id->url
+
     relatedProjects.value = relatedProjectsData.map((p, idx) => {
       const rMainId = relatedMainIdsByProject[idx]
       const image = rMainId ? (imageUrlMap[rMainId] || '/images/portfolioHero.png') : '/images/portfolioHero.png'
@@ -198,15 +135,12 @@ onMounted(async () => {
         image: image
       }
     })
-    
   } catch (error) {
     console.error('Error al cargar el proyecto:', error)
-    // Si hay error, usar datos de prueba
     project.value = mockProject
     relatedProjects.value = mockRelatedProjects
   } finally {
     isLoading.value = false
-    // Si después de todo no hay datos, usar mock
     if (!project.value.name || project.value.name === '') {
       project.value = mockProject
     }
@@ -214,6 +148,17 @@ onMounted(async () => {
       relatedProjects.value = mockRelatedProjects
     }
   }
+}
+
+onMounted(() => {
+  loadProject(props.id)
+})
+
+// React to changes in the route prop `id` and reload data
+watch(() => props.id, (newId) => {
+  if (!newId) return
+  isLoading.value = true
+  loadProject(newId)
 })
 </script>
 
@@ -384,7 +329,7 @@ onMounted(async () => {
         <router-link
           v-for="proj in relatedProjects"
           :key="proj.id"
-          :to="{ name: 'project-detail', params: { id: proj.id } }"
+          :to="{ name: 'project-detail', params: { id: String(proj.id) } }"
           class="relative group overflow-hidden cursor-pointer border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
         >
           <img

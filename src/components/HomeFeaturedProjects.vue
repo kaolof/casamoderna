@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="text-center mb-16">
         <p class="text-sm font-semibold tracking-widest text-gray-600 mb-4">DE PLANOS A REALIDADES</p>
-        <h2 class="text-5xl md:text-6xl font-bold text-black">Descubre nuestros proyectos</h2>
+        <h2 class="text-5xl md:text-6xl font-bold text-black">Mira nuestro portafolio</h2>
       </div>
 
       <!-- Loading State -->
@@ -48,7 +48,7 @@
       <!-- Button -->
       <div class="flex justify-center">
         <router-link to="/proyectos" class="px-12 py-4 border-2 border-black text-black font-bold tracking-widest hover:bg-black hover:text-white transition-all duration-300">
-          VER TODOS LOS PROYECTOS
+          PORTAFOLIO
         </router-link>
       </div>
     </div>
