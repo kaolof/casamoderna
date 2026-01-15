@@ -5,7 +5,7 @@
       <div class="text-center mb-12 px-4 sm:px-0">
         <p class="text-gray-500 text-sm font-medium tracking-wider mb-4">LO QUE HACEMOS</p>
         <h2 class="text-2xl md:text-5xl font-bold text-black text-balance">
-          Soluciones arquitectónicas<br class="hidden md:block"/>a tu medida
+          Soluciones arquitectónicas <br class="hidden md:block"/>a tu medida
         </h2>
       </div>
 

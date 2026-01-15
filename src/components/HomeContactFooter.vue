@@ -24,7 +24,7 @@
 
               <div class="flex items-center gap-3 justify-start">
                 <Mail class="h-5 w-5 text-orange-500" />
-                <a href="mailto:info@construcasaomoderna.com" class="text-white">Info@construcasaomoderna.com</a>
+                <a href="mailto:Info@construcasamoderna.com" class="text-white">Info@construcasamoderna.com</a>
               </div>
               <div class="flex items-center gap-3 justify-start">
                 <MapPin class="h-5 w-5 text-orange-500" />
@@ -103,7 +103,7 @@
         <div class="w-full md:w-1/2 text-center md:text-right space-y-2">
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Mail class="h-5 w-5 text-orange-500" />
-            <span>info@construcasaomoderna.com</span>
+            <span>Info@construcasamoderna.com</span>
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Phone class="h-5 w-5 text-orange-500" />
