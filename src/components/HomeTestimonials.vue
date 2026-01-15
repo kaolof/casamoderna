@@ -29,6 +29,7 @@
                 <img :src="t.avatar" :alt="t.name" class="w-20 h-20 rounded-full object-cover mr-6 border-4 border-white shadow-md" />
                 <div class="flex-1">
                   <h4 class="text-black font-semibold text-lg">{{ t.name }}</h4>
+                  <p class="text-orange-500 text-sm font-medium">{{ t._raw?.acf?.nombre_proyecto || '' }}</p>
                   <p class="text-gray-500 italic mt-2 text-sm">"{{ t.comment }}"</p>
                   <div class="mt-4 flex items-center">
                     <template v-for="j in 5">
@@ -77,7 +78,7 @@ const loading = ref(true)
 const error = ref(null)
 // Only two categories as requested
 const CATEGORY_TESTIMONIOS = 'TESTIMONIOS'
-const CATEGORY_RNC = 'CALIFICACIÓN (RNC)'
+const CATEGORY_RNC = 'CALIFICACIÓN'
 const categories = [CATEGORY_TESTIMONIOS, CATEGORY_RNC]
 const selectedCategory = ref(CATEGORY_TESTIMONIOS)
 
