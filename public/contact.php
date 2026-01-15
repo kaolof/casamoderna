@@ -163,8 +163,17 @@ $headers[] = 'X-Mailer: PHP/' . phpversion();
 // Convertir array de cabeceras a string
 $headers_string = implode("\r\n", $headers);
 
-// Intentar enviar el correo
-$mail_sent = @mail($to_email, $email_subject, $email_body, $headers_string);
+// Añadir cabeceras adicionales que ayudan a la entregabilidad
+$message_id = '<' . uniqid('', true) . '@' . (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'localhost') . '>';
+$headers[] = 'Message-ID: ' . $message_id;
+$headers[] = 'Date: ' . gmdate('D, d M Y H:i:s') . ' +0000';
+$headers[] = 'Return-Path: ' . $from_email;
+
+// Reconstruir string de cabeceras con las nuevas entradas
+$headers_string = implode("\r\n", $headers);
+
+// Intentar enviar el correo. Usar quinto parámetro '-f' para establecer el envelope sender (Return-Path)
+$mail_sent = @mail($to_email, $email_subject, $email_body, $headers_string, '-f' . $from_email);
 
 // ============================================================================
 // RESPUESTA AL CLIENTE
