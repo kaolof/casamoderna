@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const API_BASE_URL = `https://${import.meta.env.VITE_WP_DOMAIN}/wp-json/wp/v2`
 
-const categories = ['TODOS', 'ACADEMICO', 'RESIDENCIAL']
+const categories = ['TODOS', 'ARQUITECTURA', 'CONSTRUCCIÓN']
 
 // Proyectos desde la API
 const projects = ref([])
