@@ -24,7 +24,7 @@
 
               <div class="flex items-center gap-3 justify-start">
                 <Mail class="h-5 w-5 text-orange-500" />
-                <a href="mailto:info@construcasaomodern.com" class="text-white">Info@construcasaomodern.com</a>
+                <a href="mailto:info@construcasaomoderna.com" class="text-white">Info@construcasaomoderna.com</a>
               </div>
               <div class="flex items-center gap-3 justify-start">
                 <MapPin class="h-5 w-5 text-orange-500" />
@@ -103,7 +103,7 @@
         <div class="w-full md:w-1/2 text-center md:text-right space-y-2">
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Mail class="h-5 w-5 text-orange-500" />
-            <span>info@construcasaomodern.com</span>
+            <span>info@construcasaomoderna.com</span>
           </div>
           <div class="flex items-center justify-center md:justify-end gap-2 text-gray-700">
             <Phone class="h-5 w-5 text-orange-500" />
@@ -118,10 +118,10 @@
     </div>
 
     <!-- Footer Bottom -->
-    <div class="bg-black text-white py-6 px-8">
+    <div class="bg-[#DC803B] text-white py-6 px-8">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-gray-400 text-center md:text-left">© CONSTRUSERVICIOS CASAMODERNA. Todos los derechos reservados.</p>
-        <p class="text-sm text-gray-400 text-center md:text-right">Desarrollado por TKwebspace</p>
+      <p class="text-sm text-white text-center md:text-left">© CONSTRUSERVICIOS CASAMODERNA. Todos los derechos reservados.</p>
+      <p class="text-sm text-white text-center md:text-right">Desarrollado por TKwebspace</p>
       </div>
     </div>
   </div>

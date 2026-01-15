@@ -22,7 +22,7 @@ import HomeContactFooter from '../components/HomeContactFooter.vue'
       <HomeServices />
       <!-- Reutilización del componente HomeProjects con contenido distinto -->
       <HomeProjects
-        title="Hablemos de tu proyecto,Convierte tu idea en una realidad"
+        title="Hablemos de tu proyecto, convierte tu idea en una realidad"
         description="Agenda una llamada o reunión con nuestros arquitectos para conocer de cerca tu 
                     idea y orientarte en los primeros pasos."
         button-text="AGENDAR REUNIÓN"

@@ -5,7 +5,7 @@
         <!-- Logo -->
         <router-link to="/" class="flex flex-col sm:flex-row sm:items-center sm:gap-2 text-gray-900 cursor-pointer hover:opacity-80 transition-opacity">
           <span class="text-xs sm:text-sm font-light italic text-gray-600">CONSTRUSERVICIOS</span>
-          <span class="text-lg font-bold tracking-wide">CASA MODERNA</span>
+          <span class="text-lg font-bold tracking-wide">CASAMODERNA</span>
         </router-link>
 
         <button
@@ -83,7 +83,7 @@ const isMenuOpen = ref(false)
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Nosotros', href: '#about' },
-  { name: 'Proyectos', href: '/proyectos' },
+  { name: 'Portafolio', href: '/proyectos' },
   { name: 'Servicios', href: '#services' },
   { name: 'Testimonios', href: '#testimonials' },
   { name: 'Contacto', href: '#contact' }
